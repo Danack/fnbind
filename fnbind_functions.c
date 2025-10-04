@@ -1025,15 +1025,6 @@ static void php_fnbind_function_add_or_update(INTERNAL_FUNCTION_PARAMETERS, int 
 	}
 	php_fnbind_modify_function_doc_comment(func, doc_comment);
 
-	if (add_or_update == HASH_UPDATE) {
-//		php_fnbind_remove_function_from_reflection_objects(orig_fe);
-//		php_fnbind_destroy_misplaced_internal_function(orig_fe, funcname_lower);
-//
-//		php_fnbind_clear_all_functions_runtime_cache();
-//
-//		/* When redefining or adding a function (which may have been removed before), update the stack sizes it will be called with. */
-//		php_fnbind_fix_all_hardcoded_stack_sizes(funcname_lower, func);
-	}
 
 	if (fnbind_zend_hash_add_or_update_function_table_ptr(EG(function_table), funcname_lower, func, add_or_update) == NULL) {
 		php_error_docref(NULL, E_WARNING, "Unable to add new function");
