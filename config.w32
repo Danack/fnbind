@@ -18,7 +18,6 @@ if (PHP_FNBIND != "no") {
     PHP_INSTALL_HEADERS('ext/fnbind', 'php_fnbind.h php_fnbind_hash.h php_fnbind_zend_execute_API.h php_fnbind_zval.h fnbind.h');
 
     EXTENSION("fnbind", "fnbind.c " +
-                        "fnbind_common.c " +
                         "fnbind_functions.c " +
                         "fnbind_zend_execute_API.c ");
 }

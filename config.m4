@@ -21,7 +21,6 @@ fi
 
 if test "$PHP_FNBIND" != "no"; then
   PHP_NEW_EXTENSION(fnbind, fnbind.c fnbind_functions.c \
-fnbind_common.c \
 fnbind_zend_execute_API.c \
 , $ext_shared,, -Werror -Wall -Wno-deprecated-declarations -Wno-pedantic)
 dnl use Makefile.frag to echo notice about upgrading to fnbind 3.x

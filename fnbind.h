@@ -270,15 +270,6 @@ static inline void php_fnbind_modify_function_doc_comment(zend_function *fe, zen
 		zend_string_release(constname); \
 	}
 
-// If lcmname is one of the magic method names(e.g. __get, __construct), then override the magic method function entry for the class entry ce (And its subclasses)
-void PHP_FNBIND_ADD_MAGIC_METHOD(zend_class_entry *ce, zend_string *lcmname, zend_function *fe, const zend_function *orig_fe);
-
-// If lcmname is one of the magic method names(e.g. __get, __construct), and being removed,
-// then override the magic method function entry for the class entry ce (And its subclasses)
-void PHP_FNBIND_DEL_MAGIC_METHOD(zend_class_entry *ce, const zend_function *fe);
-
-// Sets type flags for ce and its subclasses' class entries so that the VM knows to check for magic methods.
-void ensure_all_objects_of_class_have_magic_methods(zend_class_entry *ce);
 
 /* {{{ php_fnbind_parse_doc_comment_arg */
 /* Validate that the provided doc comment is a string or null */

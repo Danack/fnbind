@@ -225,7 +225,6 @@ Define customized superglobal variables for general purpose use.
    <file name="README.md" role="doc" />
    <file name="UPGRADING_TO_3.md" role="doc" />
    <file name="fnbind.c" role="src" />
-   <file name="fnbind_common.c" role="src" />
    <file name="fnbind_functions.c" role="src" />
    <file name="fnbind_zend_execute_API.c" role="src" />
   </dir> <!-- / -->
