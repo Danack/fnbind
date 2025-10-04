@@ -37,4 +37,4 @@ printf("%-30s: %d to %d args: (%s)%s\n",
 ?>
 --EXPECT--
 fnbind_add_eval               : 3 to 7 args: (string $funcname, string $arglist, string $code, ?bool $return_by_reference, ?string $doc_comment, ?string $return_type, ?bool $is_strict)
-fnbind_add_closure            : 2 to 4 args: (string $funcname, Closure $closure, ?string $doc_comment, ?bool $is_strict)
+fnbind_add_closure            : 2 to 3 args: (string $funcname, Closure $closure, ?string $doc_comment)

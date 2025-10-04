@@ -1069,22 +1069,13 @@ PHP_FUNCTION(fnbind_add_eval)
 	*/
 PHP_FUNCTION(fnbind_add_closure)
 {
-	int add_or_update = HASH_ADD;
-
 	zend_string *funcname;
 	zend_string *funcname_lower;
-	zend_string *arguments = NULL;
-	zend_string *phpcode = NULL;
-	zend_string *doc_comment = NULL;  // TODO: Is this right?
-	parsed_return_type return_type;
-	parsed_is_strict is_strict;
-	zend_bool return_ref = 0;
-	zend_function *orig_fe = NULL, *source_fe = NULL, *func;
+	zend_string *doc_comment = NULL;
+	zend_function *source_fe = NULL, *func;
 	char target_function_type;
 	zval *args;
-	int remove_temp = 0;
 	long argc = ZEND_NUM_ARGS();
-	long opt_arg_pos = 2;
 
 	if (argc < 1 || zend_parse_parameters_ex(ZEND_PARSE_PARAMS_QUIET, 1, "S", &funcname) == FAILURE || !ZSTR_LEN(funcname)) {
 		php_error_docref(NULL, E_ERROR, "Function name should not be empty");
@@ -1092,7 +1083,14 @@ PHP_FUNCTION(fnbind_add_closure)
 	}
 
 	if (argc < 2) {
-		php_error_docref(NULL, E_ERROR, "Function body should be provided");
+		php_error_docref(NULL, E_ERROR, "Closure should be provided as second parameter");
+		RETURN_FALSE;
+	}
+
+	// For historic reasons, we don't current use zend_parse_parameters
+	// TODO - move to using zend_parse_parameters
+	if (argc > 3) {
+		php_error_docref(NULL, E_ERROR, "Too many parameters passed");
 		RETURN_FALSE;
 	}
 
@@ -1100,104 +1098,52 @@ PHP_FUNCTION(fnbind_add_closure)
 		RETURN_FALSE;
 	}
 
-	if (!php_fnbind_parse_function_arg(argc, args, 1, &source_fe, &arguments, &phpcode, &opt_arg_pos, "Function")) {
+	if (Z_TYPE(args[1]) == IS_OBJECT && Z_OBJCE(args[1]) == zend_ce_closure) {
+#if PHP_VERSION_ID >= 80000
+		source_fe = (zend_function *)zend_get_closure_method_def(Z_OBJ(args[1]));
+#else
+		source_fe = (zend_function *)zend_get_closure_method_def(&(args[1]));
+#endif
+	} else {
+		php_error_docref(NULL, E_ERROR, "Code must be a closure or two strings");
 		efree(args);
 		RETURN_FALSE;
 	}
 
-	if (argc > opt_arg_pos && !source_fe) {
-		switch (Z_TYPE(args[opt_arg_pos])) {
-			case IS_NULL:
-			case IS_TRUE:
-			case IS_FALSE:
-				convert_to_boolean_ex(&args[opt_arg_pos]);
-				return_ref = Z_TYPE(args[opt_arg_pos]) == IS_TRUE;
-				break;
-			default:
-				php_error_docref(NULL, E_WARNING, "return_ref should be boolean");
-		}
-		opt_arg_pos++;
-	}
-
-	doc_comment = php_fnbind_parse_doc_comment_arg(argc, args, opt_arg_pos);
-
-	return_type = php_fnbind_parse_return_type_arg(argc, args, opt_arg_pos + 1);
-
-	is_strict = php_fnbind_parse_is_strict_arg(argc, args, opt_arg_pos + 2);
-
+	// We only get here if source_fe is set
+	doc_comment = php_fnbind_parse_doc_comment_arg(argc, args, 2);
 	efree(args);
-	if (!return_type.valid) {
-		RETURN_FALSE;
-	}
-	if (!is_strict.valid) {
-		RETURN_FALSE;
-	}
 
-	if (source_fe && return_type.return_type) {
-		// TODO: Check what needs to be needs to be changed in opcode array if return_type is changed
-		php_error_docref(NULL, E_WARNING, "Overriding return_type is not currently supported for closures, use return type in closure definition instead (or pass in code as string)");
-		RETURN_FALSE;
-	}
-	if (source_fe && is_strict.overridden) {
-		// TODO: Check what needs to be needs to be changed in opcode array if is_strict is changed
-		php_error_docref(NULL, E_WARNING, "Overriding is_strict is not currently supported for closures (pass in code as string)");
-		RETURN_FALSE;
-	}
-
-	/* UTODO */
 	funcname_lower = zend_string_tolower(funcname);
 
-	if (add_or_update == HASH_ADD && zend_hash_exists(EG(function_table), funcname_lower)) {
+	if (zend_hash_exists(EG(function_table), funcname_lower)) {
 		zend_string_release(funcname_lower);
 		zend_throw_exception_ex(php_fnbind_exception_class_entry, 0, "Function %s() already exists", ZSTR_VAL(funcname));
 		RETURN_FALSE;
 	}
 
-	if (!source_fe) {
-		if (php_fnbind_generate_lambda_function(arguments, return_type.return_type, is_strict.is_strict, phpcode, &source_fe, return_ref) == FAILURE) {
-			zend_string_release(funcname_lower);
-			RETURN_FALSE;
-		}
-		remove_temp = 1;
-	}
+	// The original type is stored in a hash map - If an internal function is renamed, it has an entry in replaced_internal_functions.
+	target_function_type = FNBIND_G(replaced_internal_functions)
+		&& zend_hash_exists(FNBIND_G(replaced_internal_functions), funcname_lower) ? ZEND_INTERNAL_FUNCTION : ZEND_USER_FUNCTION;
 
-	if (orig_fe) {
-		// The function type should be preserved, before and after redefining.
-		target_function_type = orig_fe->type;
-	} else {
-		// The original type is stored in a hash map - If an internal function is renamed, it has an entry in replaced_internal_functions.
-		target_function_type = FNBIND_G(replaced_internal_functions)
-			&& zend_hash_exists(FNBIND_G(replaced_internal_functions), funcname_lower) ? ZEND_INTERNAL_FUNCTION : ZEND_USER_FUNCTION;
-	}
+	// target_function_type should always be ZEND_USER_FUNCTION ?
 	func = php_fnbind_function_clone(source_fe, funcname, target_function_type);
-	//printf("Func function->handler = %llx, op=%s\n", source_fe->type == ZEND_USER_FUNCTION ? (long long)source_fe->internal_function.handler : 0, add_or_update == HASH_ADD ? "add" : "update");
+	//printf("Func function->handler = %llx, op=%s\n", source_fe->type == ZEND_USER_FUNCTION ? (long long)source_fe->internal_function.handler : 0, "add");
 	func->common.scope = NULL;
 	func->common.fn_flags &= ~ZEND_ACC_CLOSURE;
 
-	if (doc_comment == NULL && source_fe->op_array.doc_comment == NULL &&
-	    orig_fe && orig_fe->type == ZEND_USER_FUNCTION && orig_fe->op_array.doc_comment) {
-		doc_comment = orig_fe->op_array.doc_comment;
-	}
 	php_fnbind_modify_function_doc_comment(func, doc_comment);
 
-
-	if (fnbind_zend_hash_add_or_update_function_table_ptr(EG(function_table), funcname_lower, func, add_or_update) == NULL) {
+	if (fnbind_zend_hash_add_or_update_function_table_ptr(EG(function_table), funcname_lower, func, HASH_ADD) == NULL) {
 		php_error_docref(NULL, E_WARNING, "Unable to add new function");
 		zend_string_release(funcname_lower);
-		if (remove_temp) {
-			php_fnbind_cleanup_lambda_function();
-		}
 		// TODO: Is there a chance this will accidentally delete the original function?
 		php_fnbind_function_dtor(func);
 		RETURN_FALSE;
 	}
 
-	if (remove_temp) {
-		php_fnbind_cleanup_lambda_function();
-	}
-
+	// Check that the function was added
 	if (zend_hash_find(EG(function_table), funcname_lower) == NULL) {
-		// TODO: || !fe - what did that do?
 		php_error_docref(NULL, E_WARNING, "Unable to locate newly added function");
 		zend_string_release(funcname_lower);
 		RETURN_FALSE;

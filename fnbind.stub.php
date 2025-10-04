@@ -44,13 +44,14 @@ function fnbind_add_eval(
 
 
 //function fnbind_function_add(
-//string $function_name,
-// $argument_list_or_closure,
-//?string $code_or_doc_comment = null,
-//?bool $return_by_reference = null,
-//?string $doc_comment = null,
-//?string $return_type = null,
-//?bool $is_strict = null): bool {}
+//string $function_name,   			// 0
+// $closure,  						 // 1
+//?string $code_or_doc_comment = null,  // 2
+//?bool $return_by_reference = null,  // 3
+//?string $doc_comment = null,    // 4
+//?string $return_type = null,    // 5
+//?bool $is_strict = null  // 6
+//): bool {}
 
 /**
  * Add a new function, similar to create_function()
@@ -62,13 +63,11 @@ function fnbind_add_eval(
  * @param string $funcname Name of function to be created
  * @param Closure $closure A closure to use as the source for this function. Static variables and `use` variables are copied.
  * @param string|null $doc_comment The doc comment of the function
- * @param bool|null $is_strict Set to true to make the redefined function use strict types.
  * @return bool - True on success or false on failure.
  */
 function fnbind_add_closure(
 	string $funcname,
 	Closure $closure,
-	string|null $doc_comment = null,
-	bool|null $is_strict = null
+	string|null $doc_comment = null
 ) : bool {
 }
