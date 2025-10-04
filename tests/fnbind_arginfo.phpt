@@ -1,16 +1,16 @@
 --TEST--
-reflection should pick up runkit7 arginfo
+reflection should pick up fnbind arginfo
 --SKIPIF--
 <?php
-if(!extension_loaded("runkit7")) print "skip";
+if(!extension_loaded("fnbind")) print "skip";
 ?>
 --INI--
 error_reporting=E_ALL
 --FILE--
 <?php
 foreach ([
-    'runkit_function_add',
-    'runkit7_function_add',
+    'fnbind_function_add',
+    'fnbind_function_add',
 ] as $name) {
 $function = new ReflectionFunction($name);
 printf("%-30s: %d to %d args: (%s)%s\n",
@@ -36,5 +36,5 @@ printf("%-30s: %d to %d args: (%s)%s\n",
 
 ?>
 --EXPECT--
-runkit_function_add           : 2 to 7 args: (string $function_name, $argument_list_or_closure, ?string $code_or_doc_comment, ?bool $return_by_reference, ?string $doc_comment, ?string $return_type, ?bool $is_strict) (Deprecated)
-runkit7_function_add          : 2 to 7 args: (string $function_name, $argument_list_or_closure, ?string $code_or_doc_comment, ?bool $return_by_reference, ?string $doc_comment, ?string $return_type, ?bool $is_strict)
+fnbind_function_add           : 2 to 7 args: (string $function_name, $argument_list_or_closure, ?string $code_or_doc_comment, ?bool $return_by_reference, ?string $doc_comment, ?string $return_type, ?bool $is_strict)
+fnbind_function_add           : 2 to 7 args: (string $function_name, $argument_list_or_closure, ?string $code_or_doc_comment, ?bool $return_by_reference, ?string $doc_comment, ?string $return_type, ?bool $is_strict)

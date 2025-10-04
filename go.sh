@@ -1,7 +1,7 @@
 
 
 phpize
-./configure --enable-runkit7-modify
+./configure --enable-fnbind
 make clean
 make install -j10
 make test

@@ -7,7 +7,7 @@
   | that is bundled with this package in the file LICENSE, and is        |
   | available through the world-wide-web at the following url:           |
   | http://www.opensource.org/licenses/BSD-3-Clause                      |
-  | or at https://github.com/runkit7/runkit7/blob/master/LICENSE         |
+  | or at https://github.com/danack/fnbind/blob/master/LICENSE         |
   +----------------------------------------------------------------------+
   | Author: Sara Golemon <pollita@php.net>                               |
   | Modified by Dmitry Zenovich <dzenovich@gmail.com>                    |
@@ -15,7 +15,7 @@
   +----------------------------------------------------------------------+
 */
 
-#include "runkit.h"
+#include "fnbind.h"
 
 /* {{{ */
 void ensure_all_objects_of_class_have_magic_methods(zend_class_entry *ce)
@@ -27,8 +27,8 @@ void ensure_all_objects_of_class_have_magic_methods(zend_class_entry *ce)
 	// Make sure that new classes will be able to call magic methods
 	ce->ce_flags |= ZEND_ACC_USE_GUARDS;
 	// Make sure that existing classes will be able to call magic methods
-  // TODO: Add test of adding magic methods working on objects initialized before the call to runkit.
-	PHP_RUNKIT_ITERATE_THROUGH_OBJECTS_STORE_BEGIN(i)
+  // TODO: Add test of adding magic methods working on objects initialized before the call to fnbind.
+	PHP_FNBIND_ITERATE_THROUGH_OBJECTS_STORE_BEGIN(i)
 	if (object->ce == ce) {
 		// based on Zend/zend_objects.c zend_object_std_init.
 		// TODO: Figure out if anything else needs to be done
@@ -39,12 +39,12 @@ void ensure_all_objects_of_class_have_magic_methods(zend_class_entry *ce)
 		ZVAL_UNDEF(object->properties_table + object->ce->default_properties_count);
 #endif
 	}
-	PHP_RUNKIT_ITERATE_THROUGH_OBJECTS_STORE_END
+	PHP_FNBIND_ITERATE_THROUGH_OBJECTS_STORE_END
 }
 /* }}} */
 
-/* {{{ PHP_RUNKIT_ADD_MAGIC_METHOD */
-void PHP_RUNKIT_ADD_MAGIC_METHOD(zend_class_entry *ce, zend_string *lcmname, zend_function *fe, const zend_function *orig_fe)
+/* {{{ PHP_FNBIND_ADD_MAGIC_METHOD */
+void PHP_FNBIND_ADD_MAGIC_METHOD(zend_class_entry *ce, zend_string *lcmname, zend_function *fe, const zend_function *orig_fe)
 {
 	if (zend_string_equals_literal(lcmname, ZEND_CLONE_FUNC_NAME)) {
 		(ce)->clone = (fe);
@@ -104,8 +104,8 @@ void PHP_RUNKIT_ADD_MAGIC_METHOD(zend_class_entry *ce, zend_string *lcmname, zen
 }
 /** }}} */
 
-/* {{{ PHP_RUNKIT_DEL_MAGIC_METHOD */
-void PHP_RUNKIT_DEL_MAGIC_METHOD(zend_class_entry *ce, const zend_function *fe)
+/* {{{ PHP_FNBIND_DEL_MAGIC_METHOD */
+void PHP_FNBIND_DEL_MAGIC_METHOD(zend_class_entry *ce, const zend_function *fe)
 {
 	if (ce->constructor == fe) {
 		ce->constructor = NULL;

@@ -7,7 +7,7 @@
   | that is bundled with this package in the file LICENSE, and is        |
   | available through the world-wide-web at the following url:           |
   | http://www.opensource.org/licenses/BSD-3-Clause                      |
-  | or at https://github.com/runkit7/runkit7/blob/master/LICENSE         |
+  | or at https://github.com/fnbind/fnbind/blob/master/LICENSE         |
   +----------------------------------------------------------------------+
   | Author: Sara Golemon <pollita@php.net>                               |
   | Modified by Dmitry Zenovich <dzenovich@gmail.com>                    |
@@ -15,9 +15,9 @@
   +----------------------------------------------------------------------+
 */
 
-#include "runkit.h"
-#include "php_runkit_hash.h"
-#include "php_runkit_zend_execute_API.h"
+#include "fnbind.h"
+#include "php_fnbind_hash.h"
+#include "php_fnbind_zend_execute_API.h"
 
 #include "Zend/zend.h"
 #if PHP_VERSION_ID >= 80000
@@ -25,35 +25,35 @@
 #endif
 
 #ifdef ZEND_MAP_PTR_GET
-#define RUNKIT_RUN_TIME_CACHE(op_array) \
+#define FNBIND_RUN_TIME_CACHE(op_array) \
        ZEND_MAP_PTR_GET((op_array)->run_time_cache)
 #else
-#define RUNKIT_RUN_TIME_CACHE(op_array) \
+#define FNBIND_RUN_TIME_CACHE(op_array) \
        ((op_array)->run_time_cache)
 #endif
 
-/* {{{ php_runkit7_obtain_internal_function_rid() */
-static int php_runkit7_obtain_internal_function_rid() {
+/* {{{ php_fnbind_obtain_internal_function_rid() */
+static int php_fnbind_obtain_internal_function_rid() {
 	// Obtain a reserved slot index that isn't used by any other internal extensions such as performance monitors.
-	int rid = RUNKIT_G(original_func_resource_handle);
+	int rid = FNBIND_G(original_func_resource_handle);
 	ZEND_ASSERT(rid >= 0);
 	return rid;
 } /* }}} */
 
 // Get lvalue of the aliased user function for a fake internal function.
-#define RUNKIT_ALIASED_USER_FUNCTION(fe) ((fe)->internal_function.reserved[php_runkit7_obtain_internal_function_rid()])
-#define RUNKIT_IS_ALIAS_FOR_USER_FUNCTION(fe) ((fe)->type == ZEND_INTERNAL_FUNCTION && (fe)->internal_function.handler == php_runkit_function_alias_handler)
+#define FNBIND_ALIASED_USER_FUNCTION(fe) ((fe)->internal_function.reserved[php_fnbind_obtain_internal_function_rid()])
+#define FNBIND_IS_ALIAS_FOR_USER_FUNCTION(fe) ((fe)->type == ZEND_INTERNAL_FUNCTION && (fe)->internal_function.handler == php_fnbind_function_alias_handler)
 
 extern ZEND_API void zend_vm_set_opcode_handler(zend_op *op);
 
 
 /* {{{ Top level declarations */
-static void php_runkit_function_copy_ctor_same_type(zend_function *fe, zend_string *newname);
+static void php_fnbind_function_copy_ctor_same_type(zend_function *fe, zend_string *newname);
 /* }}} */
 
-/* {{{ php_runkit_check_call_stack
+/* {{{ php_fnbind_check_call_stack
  */
-int php_runkit_check_call_stack(zend_op_array *op_array)
+int php_fnbind_check_call_stack(zend_op_array *op_array)
 {
 	zend_execute_data *ptr;
 
@@ -72,20 +72,20 @@ int php_runkit_check_call_stack(zend_op_array *op_array)
 /* }}} */
 
 /* Temporary function name. This function is manipulated with functions in this file. */
-#define RUNKIT_TEMP_FUNCNAME  "__runkit_temporary_function__"
+#define FNBIND_TEMP_FUNCNAME  "__fnbind_temporary_function__"
 /* Temporary class name. A function in this class is manipulated with functions in this file. */
-#define RUNKIT_TEMP_CLASSNAME  "__runkit_temporary_class__"
+#define FNBIND_TEMP_CLASSNAME  "__fnbind_temporary_class__"
 /* Temporary method name. A function in this class is manipulated with functions in this file. */
-#define RUNKIT_TEMP_METHODNAME  "__runkit_temporary_method__"
+#define FNBIND_TEMP_METHODNAME  "__fnbind_temporary_method__"
 
 /* Maintain order */
-#define PHP_RUNKIT_FETCH_FUNCTION_INSPECT	0
-#define PHP_RUNKIT_FETCH_FUNCTION_REMOVE	1
-#define PHP_RUNKIT_FETCH_FUNCTION_RENAME	2
+#define PHP_FNBIND_FETCH_FUNCTION_INSPECT	0
+#define PHP_FNBIND_FETCH_FUNCTION_REMOVE	1
+#define PHP_FNBIND_FETCH_FUNCTION_RENAME	2
 
-/* {{{ php_runkit_fetch_function
+/* {{{ php_fnbind_fetch_function
  */
-static zend_function *php_runkit_fetch_function(zend_string *fname, int flag)
+static zend_function *php_fnbind_fetch_function(zend_string *fname, int flag)
 {
 	zend_function *fe;
 	zend_string *fname_lower;
@@ -99,9 +99,9 @@ static zend_function *php_runkit_fetch_function(zend_string *fname, int flag)
 	}
 
 	if (fe->type == ZEND_INTERNAL_FUNCTION &&
-		!RUNKIT_G(internal_override)) {
+		!FNBIND_G(internal_override)) {
 		zend_string_release(fname_lower);
-		php_error_docref(NULL, E_WARNING, "%s() is an internal function and runkit.internal_override is disabled", ZSTR_VAL(fname));
+		php_error_docref(NULL, E_WARNING, "%s() is an internal function and fnbind.internal_override is disabled", ZSTR_VAL(fname));
 		return NULL;
 	}
 
@@ -113,24 +113,24 @@ static zend_function *php_runkit_fetch_function(zend_string *fname, int flag)
 	}
 
 	if (fe->type == ZEND_INTERNAL_FUNCTION &&
-		flag >= PHP_RUNKIT_FETCH_FUNCTION_REMOVE) {
+		flag >= PHP_FNBIND_FETCH_FUNCTION_REMOVE) {
 
-		if (!RUNKIT_G(replaced_internal_functions)) {
-			ALLOC_HASHTABLE(RUNKIT_G(replaced_internal_functions));
-			zend_hash_init(RUNKIT_G(replaced_internal_functions), 4, NULL, NULL, 0);
+		if (!FNBIND_G(replaced_internal_functions)) {
+			ALLOC_HASHTABLE(FNBIND_G(replaced_internal_functions));
+			zend_hash_init(FNBIND_G(replaced_internal_functions), 4, NULL, NULL, 0);
 		}
 		// FIXME figure out what this is intended to do (Restoring internal functions on request shutdown)
 		// This is also used to check if a function with a given name was originally internal.
-		// Cloning this - It would otherwise be deleted with runkit_function_redefine called later... (TODO: Add 1 to the refcount?)
+		// Cloning this - It would otherwise be deleted with fnbind_function_redefine called later... (TODO: Add 1 to the refcount?)
 		// TODO: Properly specify the behavior to avoid memory leaks
-		if (!zend_hash_exists(RUNKIT_G(replaced_internal_functions), fname_lower)) {
+		if (!zend_hash_exists(FNBIND_G(replaced_internal_functions), fname_lower)) {
 			Bucket *b;
 			zend_function *fe_copy;
 			// Copy over the original function - If the original function remains, it will be freed on module shutdown.
 			zend_string_addref(fe->common.function_name);  // possibly unnecessary
-			fe_copy = php_runkit_function_clone(fe, fe->common.function_name, ZEND_INTERNAL_FUNCTION);
+			fe_copy = php_fnbind_function_clone(fe, fe->common.function_name, ZEND_INTERNAL_FUNCTION);
 			// Copy over the original persistent string - That string wouldn't be destroyed on request shutdown in fpm, and can be reused in future requests?
-			b = php_runkit_zend_hash_find_bucket(EG(function_table), fname_lower);
+			b = php_fnbind_zend_hash_find_bucket(EG(function_table), fname_lower);
 			// php_error_docref(NULL, E_WARNING, "Finding persistent string %s: %llx\n", ZSTR_VAL(fname_lower), (long long)(uintptr_t)b);
 			// It's a persistent string, not an interned string? Is it always a persistent string (E.g. in NTS, ZTS, maintainer ZTS)?
 			if (b->key != NULL) {
@@ -141,14 +141,14 @@ static zend_function *php_runkit_fetch_function(zend_string *fname, int flag)
 			} else {
 				zend_string_addref(fname_lower);
 			}
-			zend_hash_add_ptr(RUNKIT_G(replaced_internal_functions), fname_lower, fe_copy);
+			zend_hash_add_ptr(FNBIND_G(replaced_internal_functions), fname_lower, fe_copy);
 		}
 		// printf("Adding fe %llx to replaced_internal_functions key=%s result=%llx\n", (long long)fe, ZSTR_VAL(fname_lower), (long long)result);
 		/*
-		 * If internal functions have been modified then runkit's request shutdown handler
+		 * If internal functions have been modified then fnbind's request shutdown handler
 		 * should be called after all other modules' ones.
 		 */
-		php_runkit_hash_move_runkit_to_front();
+		php_fnbind_hash_move_fnbind_to_front();
 		EG(full_tables_cleanup) = 1; // dirty hack!
 	}
 	zend_string_release(fname_lower);
@@ -157,51 +157,51 @@ static zend_function *php_runkit_fetch_function(zend_string *fname, int flag)
 }
 /* }}} */
 
-/* {{{ php_runkit_ensure_misplaced_internal_functions_table_exists */
-static inline void php_runkit_ensure_misplaced_internal_functions_table_exists()
+/* {{{ php_fnbind_ensure_misplaced_internal_functions_table_exists */
+static inline void php_fnbind_ensure_misplaced_internal_functions_table_exists()
 {
-	if (!RUNKIT_G(misplaced_internal_functions)) {
-		ALLOC_HASHTABLE(RUNKIT_G(misplaced_internal_functions));
-		zend_hash_init(RUNKIT_G(misplaced_internal_functions), 4, NULL, NULL, 0);
+	if (!FNBIND_G(misplaced_internal_functions)) {
+		ALLOC_HASHTABLE(FNBIND_G(misplaced_internal_functions));
+		zend_hash_init(FNBIND_G(misplaced_internal_functions), 4, NULL, NULL, 0);
 	}
 }
 /* }}} */
 
-/* {{{ php_runkit_add_to_misplaced_internal_functions */
-static inline void php_runkit_add_to_misplaced_internal_functions(zend_function *fe, zend_string *name_lower)
+/* {{{ php_fnbind_add_to_misplaced_internal_functions */
+static inline void php_fnbind_add_to_misplaced_internal_functions(zend_function *fe, zend_string *name_lower)
 {
 	if (fe->type == ZEND_INTERNAL_FUNCTION &&
-	    (!RUNKIT_G(misplaced_internal_functions) ||
-	     !zend_hash_exists(RUNKIT_G(misplaced_internal_functions), name_lower))
+	    (!FNBIND_G(misplaced_internal_functions) ||
+	     !zend_hash_exists(FNBIND_G(misplaced_internal_functions), name_lower))
 	) {
 		zval tmp;
-		php_runkit_ensure_misplaced_internal_functions_table_exists();
+		php_fnbind_ensure_misplaced_internal_functions_table_exists();
 		// Add misplaced internal functions to a list of strings, to be wiped out on request shutdown (before restoring originals)
 		ZVAL_STR(&tmp, name_lower);
-		zend_string_addref(name_lower);  // TODO: Free this in calls to php_runkit_destroy_misplaced_internal_function on shutdown?
-		zend_hash_next_index_insert(RUNKIT_G(misplaced_internal_functions), &tmp);
+		zend_string_addref(name_lower);  // TODO: Free this in calls to php_fnbind_destroy_misplaced_internal_function on shutdown?
+		zend_hash_next_index_insert(FNBIND_G(misplaced_internal_functions), &tmp);
 	}
 }
 /* }}} */
 
-/* {{{ php_runkit_destroy_misplaced_internal_function */
-static inline void php_runkit_destroy_misplaced_internal_function(zend_function *fe, zend_string *fname_lower)
+/* {{{ php_fnbind_destroy_misplaced_internal_function */
+static inline void php_fnbind_destroy_misplaced_internal_function(zend_function *fe, zend_string *fname_lower)
 {
-	if (fe->type == ZEND_INTERNAL_FUNCTION && RUNKIT_G(misplaced_internal_functions) &&
-	    zend_hash_exists(RUNKIT_G(misplaced_internal_functions), fname_lower)) {
-		// PHP_RUNKIT_FREE_INTERNAL_FUNCTION_NAME would have been called, but function destructor already deletes those?
-		zend_hash_del(RUNKIT_G(misplaced_internal_functions), fname_lower);
+	if (fe->type == ZEND_INTERNAL_FUNCTION && FNBIND_G(misplaced_internal_functions) &&
+	    zend_hash_exists(FNBIND_G(misplaced_internal_functions), fname_lower)) {
+		// PHP_FNBIND_FREE_INTERNAL_FUNCTION_NAME would have been called, but function destructor already deletes those?
+		zend_hash_del(FNBIND_G(misplaced_internal_functions), fname_lower);
 	}
 }
 /* }}} */
 
 #ifdef RT_CONSTANT_EX
-/* {{{ php_runkit_set_opcode_constant
+/* {{{ php_fnbind_set_opcode_constant
 		for absolute constant addresses (ZEND_USE_ABS_CONST_ADDR), changes op to point to the local copy of that literal.
 		Modifies op's contents. */
-static void php_runkit_set_opcode_constant(const zval *literals, znode_op *op, zval *literalI)
+static void php_fnbind_set_opcode_constant(const zval *literals, znode_op *op, zval *literalI)
 {
-	debug_printf("php_runkit_set_opcode_constant(%llx, %llx, %d), USE_ABS=%d\n", (long long)literals, (long long)literalI, (int)sizeof(zval), ZEND_USE_ABS_CONST_ADDR);
+	debug_printf("php_fnbind_set_opcode_constant(%llx, %llx, %d), USE_ABS=%d\n", (long long)literals, (long long)literalI, (int)sizeof(zval), ZEND_USE_ABS_CONST_ADDR);
 #if ZEND_USE_ABS_CONST_ADDR
 	RT_CONSTANT_EX(literals, *op) = literalI;
 #else
@@ -212,14 +212,14 @@ static void php_runkit_set_opcode_constant(const zval *literals, znode_op *op, z
 }
 /* }}} */
 #else
-/* {{{ php_runkit_set_opcode_constant_relative
+/* {{{ php_fnbind_set_opcode_constant_relative
 		for absolute constant addresses, creates a local copy of that literal.
 		Modifies op's contents. */
-static void php_runkit_set_opcode_constant_relative(const zend_op_array *op_array, const zend_op *opline, znode_op *op, zval *literalI)
+static void php_fnbind_set_opcode_constant_relative(const zend_op_array *op_array, const zend_op *opline, znode_op *op, zval *literalI)
 {
-	debug_printf("php_runkit_set_opcode_constant_relative(%llx, %d), USE_ABS=%d\n", (long long)literalI, (int)sizeof(zval), ZEND_USE_ABS_CONST_ADDR);
+	debug_printf("php_fnbind_set_opcode_constant_relative(%llx, %d), USE_ABS=%d\n", (long long)literalI, (int)sizeof(zval), ZEND_USE_ABS_CONST_ADDR);
 #if ZEND_USE_ABS_CONST_ADDR
-	RUNKIT_RT_CONSTANT(op_array, opline, *op) = literalI;
+	FNBIND_RT_CONSTANT(op_array, opline, *op) = literalI;
 #else
 	debug_printf("opcodes=%llx literals=%llx opline=%llx op=%llx literalI=%llx\n", (long long)op_array->opcodes, (long long)op_array->literals, (long long)opline, (long long)op, (long long)literalI);
 	// TODO: Assert that this is in a meaningful range.
@@ -231,10 +231,10 @@ static void php_runkit_set_opcode_constant_relative(const zend_op_array *op_arra
 /* }}} */
 #endif
 
-/* {{{ php_runkit_function_alias_handler
-    Used when an internal function is replaced by a user-defined/runkit function. Converts the ICALL to a UCALL.
+/* {{{ php_fnbind_function_alias_handler
+    Used when an internal function is replaced by a user-defined/fnbind function. Converts the ICALL to a UCALL.
     Params: zend_execute_data *execute_data, zval *return_value */
-static ZEND_NAMED_FUNCTION(php_runkit_function_alias_handler)
+static ZEND_NAMED_FUNCTION(php_fnbind_function_alias_handler)
 {
 	zend_function *fbc_inner;
 	zend_function *fbc = execute_data->func;
@@ -242,13 +242,13 @@ static ZEND_NAMED_FUNCTION(php_runkit_function_alias_handler)
 #if ZEND_DEBUG
 	ZEND_ASSERT(fbc->type == ZEND_INTERNAL_FUNCTION);
 #endif
-	fbc_inner = (zend_function *)RUNKIT_ALIASED_USER_FUNCTION(fbc);
-	// fprintf(stderr, "Fetched handler %llx   from fbc=%llx aliased=%p reserved=%p\n", (long long)(uintptr_t)fbc_inner, (long long)(uintptr_t)fbc, RUNKIT_ALIASED_USER_FUNCTION(fbc), fbc->internal_function.reserved);
+	fbc_inner = (zend_function *)FNBIND_ALIASED_USER_FUNCTION(fbc);
+	// fprintf(stderr, "Fetched handler %llx   from fbc=%llx aliased=%p reserved=%p\n", (long long)(uintptr_t)fbc_inner, (long long)(uintptr_t)fbc, FNBIND_ALIASED_USER_FUNCTION(fbc), fbc->internal_function.reserved);
 #if ZEND_DEBUG
 	ZEND_ASSERT(fbc_inner->type == ZEND_USER_FUNCTION);
 #endif
 
-	// printf("In php_runkit_function_alias_handler! fbc=%llx fbc_inner=%llx execute_data=%llx return_value=%llx\n", (long long) fbc, (long long) fbc_inner, (long long)execute_data, (long long)return_value);
+	// printf("In php_fnbind_function_alias_handler! fbc=%llx fbc_inner=%llx execute_data=%llx return_value=%llx\n", (long long) fbc, (long long) fbc_inner, (long long)execute_data, (long long)return_value);
 	// TODO: Pass a context?
 	// TODO: Copy the implementation of zend_call_function, use it to set up an additional stack entry....
 	// FIXME modify current_execute_data for stack traces.
@@ -256,18 +256,18 @@ static ZEND_NAMED_FUNCTION(php_runkit_function_alias_handler)
 
 	// Fake the stack and call the inner function.
 	// Set up the execution of the new command.
-	result = runkit_forward_call_user_function(fbc, fbc_inner, INTERNAL_FUNCTION_PARAM_PASSTHRU);
+	result = fnbind_forward_call_user_function(fbc, fbc_inner, INTERNAL_FUNCTION_PARAM_PASSTHRU);
 	(void)result;
-	// printf("In php_runkit_function_alias_handler! execute_data=%llx return_value=%llx, return code = %d\n", (long long)execute_data, (long long)return_value, (int)result);
+	// printf("In php_fnbind_function_alias_handler! execute_data=%llx return_value=%llx, return code = %d\n", (long long)execute_data, (long long)return_value, (int)result);
 	// TODO: Throw an exception
 	return;
 	// FIXME: This is wrong, it did not start executing the command, it only set it up for execution. Try doing something similar to call_user_func_array?
 }
 /* }}} */
 
-/* {{{ php_runkit_function_create_alias_internal_function */
+/* {{{ php_fnbind_function_create_alias_internal_function */
 /** Create a fake internal function which will call the duplicated user function instead. */
-static void php_runkit_function_create_alias_internal_function(zend_function *fe, zend_function *fe_inner)
+static void php_fnbind_function_create_alias_internal_function(zend_function *fe, zend_function *fe_inner)
 {
 	// Zero out the parts that will be an internal function.
 	memset((((uint8_t *)fe) + sizeof(fe->common)), 0, sizeof(zend_function) - sizeof(fe->common));
@@ -278,40 +278,40 @@ static void php_runkit_function_create_alias_internal_function(zend_function *fe
 	fe->type = ZEND_INTERNAL_FUNCTION;
 	fe->common.function_name = fe_inner->common.function_name;
 	zend_string_addref(fe->common.function_name);
-	debug_printf("Copying handler to %llx\n", (long long)(uintptr_t)php_runkit_function_alias_handler);
-	fe->internal_function.handler = php_runkit_function_alias_handler;
-	RUNKIT_ALIASED_USER_FUNCTION(fe) = fe_inner;
-	// fprintf(stderr, "Copying handler to %llx for fbc=%llx aliased=%p reserved=%p\n", (long long)(uintptr_t)php_runkit_function_alias_handler, (long long)(uintptr_t)fe, RUNKIT_ALIASED_USER_FUNCTION(fe), fe->internal_function.reserved);
+	debug_printf("Copying handler to %llx\n", (long long)(uintptr_t)php_fnbind_function_alias_handler);
+	fe->internal_function.handler = php_fnbind_function_alias_handler;
+	FNBIND_ALIASED_USER_FUNCTION(fe) = fe_inner;
+	// fprintf(stderr, "Copying handler to %llx for fbc=%llx aliased=%p reserved=%p\n", (long long)(uintptr_t)php_fnbind_function_alias_handler, (long long)(uintptr_t)fe, FNBIND_ALIASED_USER_FUNCTION(fe), fe->internal_function.reserved);
 }
 /* }}} */
 
-/* {{{ php_runkit_function_copy_ctor
+/* {{{ php_fnbind_function_copy_ctor
 	Duplicate structures in a zend_function where necessary to make an outright duplicate.
 	Does additional work to ensure that the type of the final function is orig_fe_type. */
-int php_runkit_function_copy_ctor(zend_function *fe, zend_string *newname, char orig_fe_type)
+int php_fnbind_function_copy_ctor(zend_function *fe, zend_string *newname, char orig_fe_type)
 {
 	if (fe->type == orig_fe_type) {
-		php_runkit_function_copy_ctor_same_type(fe, newname);
+		php_fnbind_function_copy_ctor_same_type(fe, newname);
 		return SUCCESS;
 	} else if (orig_fe_type == ZEND_INTERNAL_FUNCTION) { /* We replaced an internal function with a user function. */
 		zend_function *fe_inner = pemalloc(sizeof(zend_op_array), 1);
 		memcpy(fe_inner, fe, sizeof(zend_op_array));
-		php_runkit_function_copy_ctor_same_type(fe_inner, newname);
-		php_runkit_function_create_alias_internal_function(fe, fe_inner);
+		php_fnbind_function_copy_ctor_same_type(fe_inner, newname);
+		php_fnbind_function_create_alias_internal_function(fe, fe_inner);
 		// printf("Allocated fe_inner=%llx type=%d\n", (long long)fe_inner, (int)fe_inner->type);
 		return SUCCESS;
 	}
-	php_runkit_function_copy_ctor_same_type(fe, newname);
+	php_fnbind_function_copy_ctor_same_type(fe, newname);
 	return SUCCESS;
 }
 /* }}} */
 
-/* {{{ runkit_allocate_opcode_copy
+/* {{{ fnbind_allocate_opcode_copy
     Allocates a zend_op_array with enough memory to store the opcodes (As well as literals, if required for php 7.3) */
-static zend_op *runkit_allocate_opcode_copy(const zend_op_array *const op_array)
+static zend_op *fnbind_allocate_opcode_copy(const zend_op_array *const op_array)
 {
 #if PHP_VERSION_ID >= 70300
-	// Adjustment for https://github.com/runkit7/runkit7/issues/126
+	// Adjustment for https://github.com/fnbind/fnbind/issues/126
 	// I assume that PHP's pass_two() from Zend/zend_opcache.c would be done by now
 	if (!(ZEND_USE_ABS_CONST_ADDR) &&
 			(op_array->fn_flags & ZEND_ACC_DONE_PASS_TWO) &&
@@ -331,15 +331,15 @@ static zend_op *runkit_allocate_opcode_copy(const zend_op_array *const op_array)
 }
 /* }}} */
 
-/* {{{ runkit_allocate_literals */
-static zval *runkit_allocate_literals(const zend_op_array *const op_array, zend_op *opcode_copy)
+/* {{{ fnbind_allocate_literals */
+static zval *fnbind_allocate_literals(const zend_op_array *const op_array, zend_op *opcode_copy)
 {
 #if PHP_VERSION_ID >= 70300
-	// Adjustment for https://github.com/runkit7/runkit7/issues/126
+	// Adjustment for https://github.com/fnbind/fnbind/issues/126
 	// I assume that PHP's pass_two() from Zend/zend_opcode.c would be done by now
 	if (!(ZEND_USE_ABS_CONST_ADDR) &&
 			(op_array->fn_flags & ZEND_ACC_DONE_PASS_TWO)) {
-		// Reuse the extra space allocated for runkit_allocate_opcode_copy
+		// Reuse the extra space allocated for fnbind_allocate_opcode_copy
 		debug_printf("Allocating literals at relative offset %d last=%d\n", (int)(ZEND_MM_ALIGNED_SIZE_EX(sizeof(zend_op) * op_array->last, 16)), (int)op_array->last);
 		return (zval *)(((char *)opcode_copy) + ZEND_MM_ALIGNED_SIZE_EX(sizeof(zend_op) * op_array->last, 16));
 	}
@@ -351,9 +351,9 @@ static zval *runkit_allocate_literals(const zend_op_array *const op_array, zend_
 }
 /* }}} */
 
-/* {{{ php_runkit_arginfo_type_addref
+/* {{{ php_fnbind_arginfo_type_addref
     Adds a reference to the type or union type of this argument. See zend_type_release() and destroy_op_array() from Zend/zend_opcode.c */
-static void php_runkit_arginfo_type_addref(zend_arg_info *arginfo)
+static void php_fnbind_arginfo_type_addref(zend_arg_info *arginfo)
 {
 #if PHP_VERSION_ID < 80000
 	if (ZEND_TYPE_IS_CLASS(arginfo->type)) {
@@ -381,11 +381,11 @@ static void php_runkit_arginfo_type_addref(zend_arg_info *arginfo)
 #endif
 }
 /* }}} */
-/* {{{ php_runkit_function_copy_ctor_same_type
+/* {{{ php_fnbind_function_copy_ctor_same_type
 	Duplicates structures in an zend_function, creating a function of the same type (user/internal) as the original function
 	This does the opposite of some parts of destroy_op_array() from Zend/zend_opcode.c
 	*/
-static void php_runkit_function_copy_ctor_same_type(zend_function *fe, zend_string *newname)
+static void php_fnbind_function_copy_ctor_same_type(zend_function *fe, zend_string *newname)
 {
 
 	zval *literals;
@@ -438,7 +438,7 @@ static void php_runkit_function_copy_ctor_same_type(zend_function *fe, zend_stri
 #endif
 		}
 
-		if (RUNKIT_RUN_TIME_CACHE(op_array)) {
+		if (FNBIND_RUN_TIME_CACHE(op_array)) {
 			// TODO: Garbage collect these, somehow?
 			run_time_cache = pemalloc(op_array->cache_size, 1);
 			memset(run_time_cache, 0, op_array->cache_size);
@@ -449,7 +449,7 @@ static void php_runkit_function_copy_ctor_same_type(zend_function *fe, zend_stri
 #endif
 		}
 
-		opcode_copy = runkit_allocate_opcode_copy(op_array);
+		opcode_copy = fnbind_allocate_opcode_copy(op_array);
 		last_op = op_array->opcodes + op_array->last;
 		// TODO: See if this code works on 32-bit PHP.
 		for (i = 0; i < op_array->last; i++) {
@@ -513,7 +513,7 @@ static void php_runkit_function_copy_ctor_same_type(zend_function *fe, zend_stri
 		if (op_array->literals) {
 			uint32_t k;
 			debug_printf("   old op_array.literals = %llx, opcodes=%llx\n", (long long)op_array->literals, (long long)op_array->opcodes);
-			literals = runkit_allocate_literals(op_array, opcode_copy);
+			literals = fnbind_allocate_literals(op_array, opcode_copy);
 			debug_printf("copied op_array.literals = %llx, opcodes=%llx\n", (long long)literals, (long long)opcode_copy);
 			for (i = op_array->last_literal; i > 0; ) {
 				i--;
@@ -535,28 +535,28 @@ static void php_runkit_function_copy_ctor_same_type(zend_function *fe, zend_stri
 #ifdef RT_CONSTANT_EX
 					if (!found_op1 && new_op->op1_type == IS_CONST && RT_CONSTANT_EX(literals, new_op->op1) == &op_array->literals[i]) {
 						debug_printf("old op1 constant #%d = %d\n", (int)k, new_op->op1.constant);
-						php_runkit_set_opcode_constant(literals, &(new_op->op1), &literals[i]);
+						php_fnbind_set_opcode_constant(literals, &(new_op->op1), &literals[i]);
 						debug_printf("new op1 constant #%d = %d\n", (int)k, new_op->op1.constant);
 						found_op1 = 1;
 					}
 					if (!found_op2 && new_op->op2_type == IS_CONST && RT_CONSTANT_EX(literals, new_op->op2) == &op_array->literals[i]) {
 						debug_printf("old op2 constant #%d = %d\n", (int)k, new_op->op2.constant);
-						php_runkit_set_opcode_constant(literals, &(new_op->op2), &literals[i]);
+						php_fnbind_set_opcode_constant(literals, &(new_op->op2), &literals[i]);
 						debug_printf("new op2 constant #%d = %d\n", (int)k, new_op->op2.constant);
 						found_op2 = 1;
 					}
 #else
 					// e.g. this is used on 64-bit builds of PHP.
 					// The start of the literals zval array is memory aligned so the relative addressing may be different when copied.
-					if (!found_op1 && new_op->op1_type == IS_CONST && RUNKIT_RT_CONSTANT(op_array, &op_array->opcodes[k], new_op->op1) == &op_array->literals[i]) {
+					if (!found_op1 && new_op->op1_type == IS_CONST && FNBIND_RT_CONSTANT(op_array, &op_array->opcodes[k], new_op->op1) == &op_array->literals[i]) {
 						debug_printf("old op1 constant #%d = %d (v2)\n", (int)k, new_op->op1.constant);
-						php_runkit_set_opcode_constant_relative(op_array, new_op, &(new_op->op1), &literals[i]);
+						php_fnbind_set_opcode_constant_relative(op_array, new_op, &(new_op->op1), &literals[i]);
 						debug_printf("new op1 constant #%d = %d (v2)\n", (int)k, new_op->op1.constant);
 						found_op1 = 1;
 					}
-					if (!found_op2 && new_op->op2_type == IS_CONST && RUNKIT_RT_CONSTANT(op_array, &op_array->opcodes[k], new_op->op2) == &op_array->literals[i]) {
+					if (!found_op2 && new_op->op2_type == IS_CONST && FNBIND_RT_CONSTANT(op_array, &op_array->opcodes[k], new_op->op2) == &op_array->literals[i]) {
 						debug_printf("old op2 constant #%d = %d (v2)\n", (int)k, new_op->op2.constant);
-						php_runkit_set_opcode_constant_relative(op_array, new_op, &(new_op->op2), &literals[i]);
+						php_fnbind_set_opcode_constant_relative(op_array, new_op, &(new_op->op2), &literals[i]);
 						debug_printf("new op2 constant #%d = %d (v2)\n", (int)k, new_op->op2.constant);
 						found_op2 = 1;
 					}
@@ -588,7 +588,7 @@ static void php_runkit_function_copy_ctor_same_type(zend_function *fe, zend_stri
 			// num_args calculation taken from zend_opcode.c destroy_op_array
 			//
 			// TODO: Add tests that functions with return types are properly created and destroyed.
-			// TODO: Specify what runkit should do about return types, what is an error, what is valid.
+			// TODO: Specify what fnbind should do about return types, what is an error, what is valid.
 			uint32_t num_args = op_array->num_args;
 			int32_t offset = 0;
 
@@ -608,7 +608,7 @@ static void php_runkit_function_copy_ctor_same_type(zend_function *fe, zend_stri
 				if (tmpArginfo[i].name) {
 					zend_string_addref((tmpArginfo[i].name));
 				}
-				php_runkit_arginfo_type_addref(&tmpArginfo[i]);
+				php_fnbind_arginfo_type_addref(&tmpArginfo[i]);
 			}
 			op_array->arg_info = &tmpArginfo[offset];
 		}
@@ -621,7 +621,7 @@ static void php_runkit_function_copy_ctor_same_type(zend_function *fe, zend_stri
 			zend_arg_info *originalArginfo;
 			// num_args calculation taken from zend_opcode.c free_internal_arg_info
 			// TODO: Add tests that functions with return types are properly created and destroyed.
-			// TODO: Specify what runkit should do about return types, what is an error, what is valid.
+			// TODO: Specify what fnbind should do about return types, what is an error, what is valid.
 			uint32_t num_args = op_array->num_args + 1;
 			const int32_t offset = 1;
 
@@ -639,7 +639,7 @@ static void php_runkit_function_copy_ctor_same_type(zend_function *fe, zend_stri
 					zend_string_addref((tmpArginfo[i].name));
 				}
 				*/
-				php_runkit_arginfo_type_addref(&tmpArginfo[i]);
+				php_fnbind_arginfo_type_addref(&tmpArginfo[i]);
 			}
 			op_array->arg_info = &tmpArginfo[offset];
 		} else {
@@ -656,10 +656,10 @@ static void php_runkit_function_copy_ctor_same_type(zend_function *fe, zend_stri
 }
 /* }}} */
 
-/* {{{ php_runkit_function_clone
+/* {{{ php_fnbind_function_clone
    Makes a duplicate of fe that doesn't share any static variables, zvals, etc.
    TODO: Is there anything I can use from zend_duplicate_function? */
-zend_function *php_runkit_function_clone(zend_function *fe, zend_string *newname, char orig_fe_type)
+zend_function *php_fnbind_function_clone(zend_function *fe, zend_string *newname, char orig_fe_type)
 {
 	// Make a persistent allocation.
 	// TODO: Clean it up after a request?
@@ -670,17 +670,17 @@ zend_function *php_runkit_function_clone(zend_function *fe, zend_string *newname
 	} else {
 		memcpy(new_function, fe, sizeof(zend_function));
 	}
-	php_runkit_function_copy_ctor(new_function, newname, orig_fe_type);
+	php_fnbind_function_copy_ctor(new_function, newname, orig_fe_type);
 	return new_function;
 }
 /* }}} */
 
-void php_runkit_free_inner_if_aliased_function(zend_function *fe)
+void php_fnbind_free_inner_if_aliased_function(zend_function *fe)
 {
-	if (RUNKIT_IS_ALIAS_FOR_USER_FUNCTION(fe)) {
+	if (FNBIND_IS_ALIAS_FOR_USER_FUNCTION(fe)) {
 		zval zv_inner;
 		zend_function *fe_inner;
-		fe_inner = (zend_function *)RUNKIT_ALIASED_USER_FUNCTION(fe);
+		fe_inner = (zend_function *)FNBIND_ALIASED_USER_FUNCTION(fe);
 		// TODO: Free these earlier if possible.
 		debug_printf("Freeing internal function %llx of %llx: %s\n", (long long)(uintptr_t)(fe_inner), (long long)(uintptr_t)fe, (char *)ZSTR_VAL(fe_inner->common.function_name));
 #if ZEND_DEBUG
@@ -692,16 +692,16 @@ void php_runkit_free_inner_if_aliased_function(zend_function *fe)
 	}
 }
 
-/* {{{ php_runkit_function_dtor_impl - Destroys functions, handles special fields added if they're from runkit. */
-void php_runkit_function_dtor_impl(zend_function *fe, zend_bool is_clone)
+/* {{{ php_fnbind_function_dtor_impl - Destroys functions, handles special fields added if they're from fnbind. */
+void php_fnbind_function_dtor_impl(zend_function *fe, zend_bool is_clone)
 {
 	zval zv;
 	zend_bool is_user_function;
 	is_user_function = fe->type == ZEND_USER_FUNCTION;
-	php_runkit_free_inner_if_aliased_function(fe);
+	php_fnbind_free_inner_if_aliased_function(fe);
 	ZVAL_FUNC(&zv, fe);
 	zend_function_dtor(&zv);
-	// Note: This can only be used with zend_functions created by php_runkit_function_clone.
+	// Note: This can only be used with zend_functions created by php_fnbind_function_clone.
 	// ZEND_INTERNAL_FUNCTIONs are freed.
 	if (is_clone && is_user_function) {
 		pefree(fe, 1);
@@ -709,21 +709,21 @@ void php_runkit_function_dtor_impl(zend_function *fe, zend_bool is_clone)
 }
 /* }}} */
 
-/* {{{ php_runkit_function_dtor - Only to be used if we are sure this was created by runkit with runkit_function_clone. */
-void php_runkit_function_dtor(zend_function *fe)
+/* {{{ php_fnbind_function_dtor - Only to be used if we are sure this was created by fnbind with fnbind_function_clone. */
+void php_fnbind_function_dtor(zend_function *fe)
 {
-	php_runkit_function_dtor_impl(fe, 1);
+	php_fnbind_function_dtor_impl(fe, 1);
 }
 /* }}} */
 
 // The original destructor of the affected function_table.
 static dtor_func_t __function_table_orig_pDestructor = NULL;
 
-static void php_runkit_function_table_dtor(zval *pDest)
+static void php_fnbind_function_table_dtor(zval *pDest)
 {
 	zend_function *fe = (zend_function *)Z_PTR_P(pDest);
-	if (RUNKIT_IS_ALIAS_FOR_USER_FUNCTION(fe)) {
-		php_runkit_free_inner_if_aliased_function(fe);
+	if (FNBIND_IS_ALIAS_FOR_USER_FUNCTION(fe)) {
+		php_fnbind_free_inner_if_aliased_function(fe);
 	} else {
 		// Don't free the inner if it's one of the ZEND_INTERNAL_FUNCTIONs moved elsewhere
 		if (fe->type != ZEND_INTERNAL_FUNCTION && __function_table_orig_pDestructor != NULL) {
@@ -734,14 +734,14 @@ static void php_runkit_function_table_dtor(zval *pDest)
 
 
 
-/* {{{ php_runkit_remove_from_function_table - This handles special cases where we associate aliased functions with the original */
-int php_runkit_remove_from_function_table(HashTable *function_table, zend_string *func_lower)
+/* {{{ php_fnbind_remove_from_function_table - This handles special cases where we associate aliased functions with the original */
+int php_fnbind_remove_from_function_table(HashTable *function_table, zend_string *func_lower)
 {
 	// To be called for internal functions (TODO: internal methods?)
 	// TODO: Have a way to detect function clones.
 	int result;
 	__function_table_orig_pDestructor = function_table->pDestructor;
-	function_table->pDestructor = php_runkit_function_table_dtor;
+	function_table->pDestructor = php_fnbind_function_table_dtor;
 	result = zend_hash_del(function_table, func_lower);
 	function_table->pDestructor = __function_table_orig_pDestructor;
 	__function_table_orig_pDestructor = NULL;
@@ -749,14 +749,14 @@ int php_runkit_remove_from_function_table(HashTable *function_table, zend_string
 }
 /* }}} */
 
-/* {{{ php_runkit_update_ptr_in_function_table - This handles special cases where we associate aliased functions with the original, and then replace that with zend_hash_update */
-void *php_runkit_update_ptr_in_function_table(HashTable *function_table, zend_string *func_lower, zend_function *f)
+/* {{{ php_fnbind_update_ptr_in_function_table - This handles special cases where we associate aliased functions with the original, and then replace that with zend_hash_update */
+void *php_fnbind_update_ptr_in_function_table(HashTable *function_table, zend_string *func_lower, zend_function *f)
 {
 	// To be called for internal functions (TODO: internal methods?)
 	// TODO: Have a way to detect function clones.
 	void *result;
 	__function_table_orig_pDestructor = function_table->pDestructor;
-	function_table->pDestructor = php_runkit_function_table_dtor;
+	function_table->pDestructor = php_fnbind_function_table_dtor;
 	result = zend_hash_update_ptr(function_table, func_lower, f);
 	function_table->pDestructor = __function_table_orig_pDestructor;
 	__function_table_orig_pDestructor = NULL;
@@ -764,78 +764,78 @@ void *php_runkit_update_ptr_in_function_table(HashTable *function_table, zend_st
 }
 /* }}} */
 
-/* {{{ runkit_zend_hash_add_or_update_function_table_ptr */
-static inline void *runkit_zend_hash_add_or_update_function_table_ptr(HashTable *function_table, zend_string *key, void *pData, uint32_t flag)
+/* {{{ fnbind_zend_hash_add_or_update_function_table_ptr */
+static inline void *fnbind_zend_hash_add_or_update_function_table_ptr(HashTable *function_table, zend_string *key, void *pData, uint32_t flag)
 {
 	void *result;
 	__function_table_orig_pDestructor = function_table->pDestructor;
-	function_table->pDestructor = php_runkit_function_table_dtor;
-	result = runkit_zend_hash_add_or_update_ptr(function_table, key, pData, flag);
+	function_table->pDestructor = php_fnbind_function_table_dtor;
+	result = fnbind_zend_hash_add_or_update_ptr(function_table, key, pData, flag);
 	function_table->pDestructor = __function_table_orig_pDestructor;
 	__function_table_orig_pDestructor = NULL;
 	return result;
 }
 /* }}} */
 
-/* {{{ php_runkit_clear_function_runtime_cache */
-static void php_runkit_clear_function_runtime_cache(zend_function *f)
+/* {{{ php_fnbind_clear_function_runtime_cache */
+static void php_fnbind_clear_function_runtime_cache(zend_function *f)
 {
 	zend_op_array *op_array;
 	if (f->type != ZEND_USER_FUNCTION) {
 		return;
 	}
 	op_array = &(f->op_array);
-	if (op_array->cache_size == 0 || RUNKIT_RUN_TIME_CACHE(op_array) == NULL) {
+	if (op_array->cache_size == 0 || FNBIND_RUN_TIME_CACHE(op_array) == NULL) {
 		return;
 	}
 
 	// TODO: Does memset do what I want it to do?
-	memset(RUNKIT_RUN_TIME_CACHE(op_array), 0, op_array->cache_size);
+	memset(FNBIND_RUN_TIME_CACHE(op_array), 0, op_array->cache_size);
 }
 /* }}} */
 
-/* {{{ php_runkit_clear_function_runtime_cache_for_function_table */
-static void php_runkit_clear_function_runtime_cache_for_function_table(HashTable *function_table) {
+/* {{{ php_fnbind_clear_function_runtime_cache_for_function_table */
+static void php_fnbind_clear_function_runtime_cache_for_function_table(HashTable *function_table) {
 	zend_function* f;
 	ZEND_HASH_FOREACH_PTR(function_table, f) {
-		php_runkit_clear_function_runtime_cache(f);
+		php_fnbind_clear_function_runtime_cache(f);
 	} ZEND_HASH_FOREACH_END();
 }
 /* }}} */
 
-/* {{{ php_runkit_clear_all_functions_runtime_cache */
-void php_runkit_clear_all_functions_runtime_cache()
+/* {{{ php_fnbind_clear_all_functions_runtime_cache */
+void php_fnbind_clear_all_functions_runtime_cache()
 {
 	uint32_t i;
 	zend_execute_data *ptr;
 	zend_class_entry *ce;
 
-	php_runkit_clear_function_runtime_cache_for_function_table(EG(function_table));
+	php_fnbind_clear_function_runtime_cache_for_function_table(EG(function_table));
 
 	ZEND_HASH_FOREACH_PTR(EG(class_table), ce) {
-		php_runkit_clear_function_runtime_cache_for_function_table(&(ce->function_table));
+		php_fnbind_clear_function_runtime_cache_for_function_table(&(ce->function_table));
 	} ZEND_HASH_FOREACH_END();
 
 	// TODO: Does this make sense, does it work with a runtime cache?
 	for (ptr = EG(current_execute_data); ptr != NULL; ptr = ptr->prev_execute_data) {
 		// TODO: I assume that ptr->run_time_cache is the same pointer, if set?
-		if (ptr->func == NULL || ptr->func->type == ZEND_INTERNAL_FUNCTION || ptr->func->op_array.cache_size == 0 || RUNKIT_RUN_TIME_CACHE(&(ptr->func->op_array)) == NULL) {
+		if (ptr->func == NULL || ptr->func->type == ZEND_INTERNAL_FUNCTION || ptr->func->op_array.cache_size == 0 || FNBIND_RUN_TIME_CACHE(&(ptr->func->op_array)) == NULL) {
 			continue;
 		}
-		memset(RUNKIT_RUN_TIME_CACHE(&(ptr->func->op_array)), 0, ptr->func->op_array.cache_size);
+		memset(FNBIND_RUN_TIME_CACHE(&(ptr->func->op_array)), 0, ptr->func->op_array.cache_size);
 	}
 
-	PHP_RUNKIT_ITERATE_THROUGH_OBJECTS_STORE_BEGIN(i)
+	PHP_FNBIND_ITERATE_THROUGH_OBJECTS_STORE_BEGIN(i)
 		if (object->ce == zend_ce_closure) {
 		zend_closure *cl = (zend_closure *)object;
-			php_runkit_clear_function_runtime_cache(&cl->func);
+			php_fnbind_clear_function_runtime_cache(&cl->func);
 		}
-	PHP_RUNKIT_ITERATE_THROUGH_OBJECTS_STORE_END
+	PHP_FNBIND_ITERATE_THROUGH_OBJECTS_STORE_END
 }
 /* }}} */
 
-/* {{{ php_runkit_fix_hardcoded_stack_sizes */
-static inline void php_runkit_fix_hardcoded_stack_sizes(zend_function *f, zend_string *called_name_lower, zend_function *called_f)
+/* {{{ php_fnbind_fix_hardcoded_stack_sizes */
+static inline void php_fnbind_fix_hardcoded_stack_sizes(zend_function *f, zend_string *called_name_lower, zend_function *called_f)
 {
 	// called_name_lower is the lowercase function name.
 	// f is a function which may or may not call called_name_lower, and may or may not have already been fixed.
@@ -854,13 +854,13 @@ static inline void php_runkit_fix_hardcoded_stack_sizes(zend_function *f, zend_s
 	op_array = &(f->op_array);
 	opline_it = op_array->opcodes;
 	end = opline_it + op_array->last;
-	//printf("Calling php_runkit_fix_hardcoded_stack_sizes for user func last=%d\n", op_array->last);
+	//printf("Calling php_fnbind_fix_hardcoded_stack_sizes for user func last=%d\n", op_array->last);
 	for (; opline_it < end; opline_it++) {
 		// printf("Calling opcode=%d\n", opline_it->opcode);
 		// PHP uses different constants (More constant space needed for ZEND_INIT_FCALL_BY_NAME),
 		// instead of converting to ZEND_INIT_FCALL_BY_NAME, recalculate the maximum amount of stack space opline_it may need.
 		if (opline_it->opcode == ZEND_INIT_FCALL) {
-			zval *function_name = (zval *)(RUNKIT_RT_CONSTANT(op_array, opline_it, opline_it->op2));
+			zval *function_name = (zval *)(FNBIND_RT_CONSTANT(op_array, opline_it, opline_it->op2));
 			//printf("Checking init_fcall, function name = %s\n", ZSTR_VAL(Z_STR_P(function_name)));
 			if (zend_string_equals(Z_STR_P(function_name), called_name_lower)) {
 				// Modify that opline with the recalculated required stack size
@@ -874,27 +874,27 @@ static inline void php_runkit_fix_hardcoded_stack_sizes(zend_function *f, zend_s
 }
 /* }}} */
 
-/* {{{ php_runkit_fix_hardcoded_stack_sizes_for_function_table */
-static void php_runkit_fix_hardcoded_stack_sizes_for_function_table(HashTable *function_table, zend_string *called_name_lower, zend_function *called_f)
+/* {{{ php_fnbind_fix_hardcoded_stack_sizes_for_function_table */
+static void php_fnbind_fix_hardcoded_stack_sizes_for_function_table(HashTable *function_table, zend_string *called_name_lower, zend_function *called_f)
 {
 	zend_function *f;
 	ZEND_HASH_FOREACH_PTR(function_table, f) {
-		php_runkit_fix_hardcoded_stack_sizes(f, called_name_lower, called_f);
+		php_fnbind_fix_hardcoded_stack_sizes(f, called_name_lower, called_f);
 	} ZEND_HASH_FOREACH_END();
 }
 /* }}} */
 
-/* {{{ php_runkit_fix_hardcoded_stack_sizes */
-void php_runkit_fix_all_hardcoded_stack_sizes(zend_string *called_name_lower, zend_function *called_f)
+/* {{{ php_fnbind_fix_hardcoded_stack_sizes */
+void php_fnbind_fix_all_hardcoded_stack_sizes(zend_string *called_name_lower, zend_function *called_f)
 {
 	uint32_t i;
 	zend_class_entry *ce;
 	zend_execute_data *ptr;
 
-	php_runkit_fix_hardcoded_stack_sizes_for_function_table(EG(function_table), called_name_lower, called_f);
+	php_fnbind_fix_hardcoded_stack_sizes_for_function_table(EG(function_table), called_name_lower, called_f);
 
 	ZEND_HASH_FOREACH_PTR(EG(class_table), ce) {
-		php_runkit_fix_hardcoded_stack_sizes_for_function_table(&(ce->function_table), called_name_lower, called_f);
+		php_fnbind_fix_hardcoded_stack_sizes_for_function_table(&(ce->function_table), called_name_lower, called_f);
 	} ZEND_HASH_FOREACH_END();
 
 	// This is also needed to get the top-level {main} script, which isn't in the function table
@@ -904,20 +904,20 @@ void php_runkit_fix_all_hardcoded_stack_sizes(zend_string *called_name_lower, ze
 		if (ptr->func == NULL || ptr->func->type != ZEND_USER_FUNCTION) {
 			continue;
 		}
-		php_runkit_fix_hardcoded_stack_sizes(ptr->func, called_name_lower, called_f);
+		php_fnbind_fix_hardcoded_stack_sizes(ptr->func, called_name_lower, called_f);
 	}
 
-	PHP_RUNKIT_ITERATE_THROUGH_OBJECTS_STORE_BEGIN(i)
+	PHP_FNBIND_ITERATE_THROUGH_OBJECTS_STORE_BEGIN(i)
 		if (object->ce == zend_ce_closure) {
 		zend_closure *cl = (zend_closure *)object;
-			php_runkit_fix_hardcoded_stack_sizes(&cl->func, called_name_lower, called_f);
+			php_fnbind_fix_hardcoded_stack_sizes(&cl->func, called_name_lower, called_f);
 		}
-	PHP_RUNKIT_ITERATE_THROUGH_OBJECTS_STORE_END
+	PHP_FNBIND_ITERATE_THROUGH_OBJECTS_STORE_END
 }
 /* }}} */
 
-/* {{{ php_runkit_reflection_update_property */
-static void php_runkit_reflection_update_property(zend_object *object, const char *name, zval *value)
+/* {{{ php_fnbind_reflection_update_property */
+static void php_fnbind_reflection_update_property(zend_object *object, const char *name, zval *value)
 {
 	// Copied from ext/reflection's reflection_update_property
 #if PHP_VERSION_ID >= 80000
@@ -938,17 +938,17 @@ static void php_runkit_reflection_update_property(zend_object *object, const cha
 }
 /* }}} */
 
-/* {{{ php_runkit_update_reflection_object_name */
-void php_runkit_update_reflection_object_name(zend_object *object, int handle, const char *name)
+/* {{{ php_fnbind_update_reflection_object_name */
+void php_fnbind_update_reflection_object_name(zend_object *object, int handle, const char *name)
 {
 	zval prop_value;
 	ZVAL_STRING(&prop_value, name);
-	php_runkit_reflection_update_property(object, RUNKIT_G(name_str), &prop_value);
+	php_fnbind_reflection_update_property(object, FNBIND_G(name_str), &prop_value);
 }
 /* }}} */
 
-/* {{{ php_runkit_free_reflection_function */
-static void php_runkit_free_reflection_function(zend_function *fptr)
+/* {{{ php_fnbind_free_reflection_function */
+static void php_fnbind_free_reflection_function(zend_function *fptr)
 {
 	// Exact copy of ext/reflection's _free_function
 	if (fptr && (fptr->internal_function.fn_flags & ZEND_ACC_CALL_VIA_TRAMPOLINE)) {
@@ -966,9 +966,9 @@ static inline reflection_object *reflection_object_from_obj(zend_object *obj)
 }
 /* }}} */
 
-/* {{{ php_runkit_delete_reflection_function_ptr
+/* {{{ php_fnbind_delete_reflection_function_ptr
  	Frees the parts of a reflection object referring to the removed method/function(/parameter?)  */
-static void php_runkit_delete_reflection_function_ptr(reflection_object *intern)
+static void php_fnbind_delete_reflection_function_ptr(reflection_object *intern)
 {
 	// Copied from ext/reflection's reflection_free_objects_storage
 	parameter_reference *reference;
@@ -976,11 +976,11 @@ static void php_runkit_delete_reflection_function_ptr(reflection_object *intern)
 		switch (intern->ref_type) {
 			case REF_TYPE_PARAMETER:
 				reference = (parameter_reference *)intern->ptr;
-				php_runkit_free_reflection_function(reference->fptr);
+				php_fnbind_free_reflection_function(reference->fptr);
 				efree(intern->ptr);
 				break;
 			case REF_TYPE_FUNCTION:
-				php_runkit_free_reflection_function(intern->ptr);
+				php_fnbind_free_reflection_function(intern->ptr);
 				break;
 			case REF_TYPE_PROPERTY: {
 #if PHP_VERSION_ID >= 70300
@@ -1007,8 +1007,8 @@ static void php_runkit_delete_reflection_function_ptr(reflection_object *intern)
 }
 /* }}}*/
 
-/* {{{ php_runkit_remove_function_from_reflection_objects */
-void php_runkit_remove_function_from_reflection_objects(zend_function *fe)
+/* {{{ php_fnbind_remove_function_from_reflection_objects */
+void php_fnbind_remove_function_from_reflection_objects(zend_function *fe)
 {
 	uint32_t i;
 	extern PHPAPI zend_class_entry *reflection_function_ptr;
@@ -1016,45 +1016,45 @@ void php_runkit_remove_function_from_reflection_objects(zend_function *fe)
 	extern PHPAPI zend_class_entry *reflection_parameter_ptr;
 
 	/* TODO: Look into whether ReflectionAttribute and ReflectionType should be handled */
-	PHP_RUNKIT_ITERATE_THROUGH_OBJECTS_STORE_BEGIN(i)
+	PHP_FNBIND_ITERATE_THROUGH_OBJECTS_STORE_BEGIN(i)
 		if (object->ce == reflection_function_ptr) {
 			reflection_object *refl_obj = reflection_object_from_obj(object);
 			if (refl_obj->ptr == fe) {
-				php_runkit_delete_reflection_function_ptr(refl_obj);
-				refl_obj->ptr = RUNKIT_G(removed_function);
-				php_runkit_update_reflection_object_name(object, i, RUNKIT_G(removed_function_str));
+				php_fnbind_delete_reflection_function_ptr(refl_obj);
+				refl_obj->ptr = FNBIND_G(removed_function);
+				php_fnbind_update_reflection_object_name(object, i, FNBIND_G(removed_function_str));
 			}
 		} else if (object->ce == reflection_method_ptr) {
 			reflection_object *refl_obj = reflection_object_from_obj(object);
 			if (refl_obj->ptr == fe) {
 				zend_function *f = emalloc(sizeof(zend_function));
-				memcpy(f, RUNKIT_G(removed_method), sizeof(zend_function));
+				memcpy(f, FNBIND_G(removed_method), sizeof(zend_function));
 				f->common.scope = fe->common.scope;
 #ifdef ZEND_ACC_CALL_VIA_HANDLER
 				f->internal_function.fn_flags |= ZEND_ACC_CALL_VIA_HANDLER; // This is a trigger to free it from destructor
 #endif
 				zend_string_addref(f->internal_function.function_name);
-				php_runkit_delete_reflection_function_ptr(refl_obj);
+				php_fnbind_delete_reflection_function_ptr(refl_obj);
 				refl_obj->ptr = f;
-				php_runkit_update_reflection_object_name(object, i, RUNKIT_G(removed_method_str));
+				php_fnbind_update_reflection_object_name(object, i, FNBIND_G(removed_method_str));
 			}
 		} else if (object->ce == reflection_parameter_ptr) {
 			reflection_object *refl_obj = reflection_object_from_obj(object);
 		parameter_reference *reference = (parameter_reference *)refl_obj->ptr;
 			if (reference && reference->fptr == fe) {
-				php_runkit_delete_reflection_function_ptr(refl_obj);
+				php_fnbind_delete_reflection_function_ptr(refl_obj);
 				refl_obj->ptr = NULL;
-				php_runkit_update_reflection_object_name(object, i, RUNKIT_G(removed_parameter_str));
+				php_fnbind_update_reflection_object_name(object, i, FNBIND_G(removed_parameter_str));
 			}
 		}
-	PHP_RUNKIT_ITERATE_THROUGH_OBJECTS_STORE_END
+	PHP_FNBIND_ITERATE_THROUGH_OBJECTS_STORE_END
 }
 /* }}} */
 
-/* {{{ php_runkit_generate_lambda_function
+/* {{{ php_fnbind_generate_lambda_function
     Heavily borrowed from ZEND_FUNCTION(create_function).
-    Used by runkit_function_add and runkit_function_redefine. Also see php_runkit_generate_lambda_method. */
-int php_runkit_generate_lambda_function(const zend_string *arguments, const zend_string *return_type, const zend_bool is_strict, const zend_string *phpcode,
+    Used by fnbind_function_add and fnbind_function_redefine. Also see php_fnbind_generate_lambda_method. */
+int php_fnbind_generate_lambda_function(const zend_string *arguments, const zend_string *return_type, const zend_bool is_strict, const zend_string *phpcode,
                                         zend_function **pfe, zend_bool return_ref)
 {
 	char *eval_code;
@@ -1064,7 +1064,7 @@ int php_runkit_generate_lambda_function(const zend_string *arguments, const zend
 
 	eval_code_length =
 		(is_strict ? (sizeof("declare(strict_types=1);") - 1) : 0) +
-		sizeof("function " RUNKIT_TEMP_FUNCNAME) +
+		sizeof("function " FNBIND_TEMP_FUNCNAME) +
 		ZSTR_LEN(arguments) + 4 +
 		ZSTR_LEN(phpcode) +
 		(return_ref ? 1 : 0);
@@ -1081,22 +1081,22 @@ int php_runkit_generate_lambda_function(const zend_string *arguments, const zend
 	// TODO: ZEND_CALL_USES_STRICT_TYPES (ZEND_ACC_STRICT_TYPES) controls the strict mode behavior
 	// I don't believe that that option changes the opcodes, so copy() can work.
 	eval_code = (char *)emalloc(eval_code_length);
-	snprintf(eval_code, eval_code_length, "%sfunction %s" RUNKIT_TEMP_FUNCNAME "(%s)%s{%s}", is_strict ? "declare(strict_types=1);" : "", (return_ref ? "&" : ""), ZSTR_VAL(arguments), return_type_code, ZSTR_VAL(phpcode));
-	eval_name = zend_make_compiled_string_description("runkit runtime-created function");
+	snprintf(eval_code, eval_code_length, "%sfunction %s" FNBIND_TEMP_FUNCNAME "(%s)%s{%s}", is_strict ? "declare(strict_types=1);" : "", (return_ref ? "&" : ""), ZSTR_VAL(arguments), return_type_code, ZSTR_VAL(phpcode));
+	eval_name = zend_make_compiled_string_description("fnbind runtime-created function");
 	if (zend_eval_string(eval_code, NULL, eval_name) == FAILURE) {
 		php_error_docref(NULL, E_ERROR, "Cannot create temporary function '%s'", eval_code);
 		efree(eval_code);
 		efree(eval_name);
 		efree(return_type_code);
-		zend_hash_str_del(EG(function_table), RUNKIT_TEMP_FUNCNAME, sizeof(RUNKIT_TEMP_FUNCNAME) - 1);
+		zend_hash_str_del(EG(function_table), FNBIND_TEMP_FUNCNAME, sizeof(FNBIND_TEMP_FUNCNAME) - 1);
 		return FAILURE;
 	}
 	efree(eval_code);
 	efree(eval_name);
 	efree(return_type_code);
 
-	if ((*pfe = zend_hash_str_find_ptr(EG(function_table), RUNKIT_TEMP_FUNCNAME, sizeof(RUNKIT_TEMP_FUNCNAME) - 1)) == NULL) {
-		php_error_docref(NULL, E_ERROR, "Unexpected inconsistency creating temporary runkit function");
+	if ((*pfe = zend_hash_str_find_ptr(EG(function_table), FNBIND_TEMP_FUNCNAME, sizeof(FNBIND_TEMP_FUNCNAME) - 1)) == NULL) {
+		php_error_docref(NULL, E_ERROR, "Unexpected inconsistency creating temporary fnbind function");
 		return FAILURE;
 	}
 
@@ -1104,10 +1104,10 @@ int php_runkit_generate_lambda_function(const zend_string *arguments, const zend
 }
 /* }}} */
 
-/* {{{ php_runkit_generate_lambda_method
+/* {{{ php_fnbind_generate_lambda_method
 	Heavily borrowed from ZEND_FUNCTION(create_function).
-	Used by runkit_method_add and runkit_method_redefine. Also see php_runkit_generate_lambda_function. */
-int php_runkit_generate_lambda_method(const zend_string *arguments, const zend_string *return_type, const zend_bool is_strict, const zend_string *phpcode,
+	Used by fnbind_method_add and fnbind_method_redefine. Also see php_fnbind_generate_lambda_function. */
+int php_fnbind_generate_lambda_method(const zend_string *arguments, const zend_string *return_type, const zend_bool is_strict, const zend_string *phpcode,
 
                                         zend_function **pfe, zend_bool return_ref, zend_bool is_static)
 {
@@ -1119,7 +1119,7 @@ int php_runkit_generate_lambda_method(const zend_string *arguments, const zend_s
 
 	eval_code_length =
 		(is_strict ? (sizeof("declare(strict_types=1);") - 1) : 0) +
-		sizeof("class " RUNKIT_TEMP_CLASSNAME " { %sfunction " RUNKIT_TEMP_METHODNAME) +
+		sizeof("class " FNBIND_TEMP_CLASSNAME " { %sfunction " FNBIND_TEMP_METHODNAME) +
 		ZSTR_LEN(arguments) + 4 +
 		ZSTR_LEN(phpcode) +
 		(is_static ? (sizeof("static ") - 1) : 0) +
@@ -1138,33 +1138,33 @@ int php_runkit_generate_lambda_method(const zend_string *arguments, const zend_s
 
 	eval_code = (char *)emalloc(eval_code_length);
 	snprintf(eval_code, eval_code_length,
-			"%sclass " RUNKIT_TEMP_CLASSNAME " { %sfunction %s" RUNKIT_TEMP_METHODNAME "(%s)%s{%s}}",
+			"%sclass " FNBIND_TEMP_CLASSNAME " { %sfunction %s" FNBIND_TEMP_METHODNAME "(%s)%s{%s}}",
 			(is_strict ? "declare(strict_types=1);" : ""),
 			(is_static ? "static " : ""),
 			(return_ref ? "&" : ""),
 			ZSTR_VAL(arguments),
 			return_type_code,
 			ZSTR_VAL(phpcode));
-	eval_name = zend_make_compiled_string_description("runkit runtime-created method");
+	eval_name = zend_make_compiled_string_description("fnbind runtime-created method");
 	if (zend_eval_string(eval_code, NULL, eval_name) == FAILURE) {
 		efree(eval_code);
 		efree(eval_name);
 		efree(return_type_code);
 		php_error_docref(NULL, E_ERROR, "Cannot create temporary method");
-		zend_hash_str_del(EG(class_table), RUNKIT_TEMP_CLASSNAME, sizeof(RUNKIT_TEMP_CLASSNAME) - 1);
+		zend_hash_str_del(EG(class_table), FNBIND_TEMP_CLASSNAME, sizeof(FNBIND_TEMP_CLASSNAME) - 1);
 		return FAILURE;
 	}
 	efree(eval_code);
 	efree(eval_name);
 	efree(return_type_code);
 
-	ce = zend_hash_str_find_ptr(EG(class_table), RUNKIT_TEMP_CLASSNAME, sizeof(RUNKIT_TEMP_CLASSNAME) - 1);
+	ce = zend_hash_str_find_ptr(EG(class_table), FNBIND_TEMP_CLASSNAME, sizeof(FNBIND_TEMP_CLASSNAME) - 1);
 	if (ce == NULL) {
 		php_error_docref(NULL, E_ERROR, "Unexpected inconsistency creating a temporary class");
 		return FAILURE;
 	}
 
-	if ((*pfe = zend_hash_str_find_ptr(&(ce->function_table), RUNKIT_TEMP_METHODNAME, sizeof(RUNKIT_TEMP_METHODNAME) - 1)) == NULL) {
+	if ((*pfe = zend_hash_str_find_ptr(&(ce->function_table), FNBIND_TEMP_METHODNAME, sizeof(FNBIND_TEMP_METHODNAME) - 1)) == NULL) {
 		php_error_docref(NULL, E_ERROR, "Unexpected inconsistency creating a temporary method");
 	}
 
@@ -1173,12 +1173,12 @@ int php_runkit_generate_lambda_method(const zend_string *arguments, const zend_s
 
 /* }}} */
 
-/** {{{ php_runkit_cleanup_lambda_method
-	Tries to free the temporary lambda function (from php_runkit_generate_lambda_function).
+/** {{{ php_fnbind_cleanup_lambda_method
+	Tries to free the temporary lambda function (from php_fnbind_generate_lambda_function).
 	If it fails, emits a warning and returns FAILURE.  */
-int php_runkit_cleanup_lambda_function()
+int php_fnbind_cleanup_lambda_function()
 {
-	if (zend_hash_str_del(EG(function_table), RUNKIT_TEMP_FUNCNAME, sizeof(RUNKIT_TEMP_FUNCNAME) - 1) == FAILURE) {
+	if (zend_hash_str_del(EG(function_table), FNBIND_TEMP_FUNCNAME, sizeof(FNBIND_TEMP_FUNCNAME) - 1) == FAILURE) {
 		php_error_docref(NULL, E_WARNING, "Unable to remove temporary function entry");
 		return FAILURE;
 	}
@@ -1191,8 +1191,8 @@ int php_runkit_cleanup_lambda_function()
 
 
 
-/* {{{ php_runkit_function_add_or_update */
-static void php_runkit_function_add_or_update(INTERNAL_FUNCTION_PARAMETERS, int add_or_update)
+/* {{{ php_fnbind_function_add_or_update */
+static void php_fnbind_function_add_or_update(INTERNAL_FUNCTION_PARAMETERS, int add_or_update)
 {
 	zend_string *funcname;
 	zend_string *funcname_lower;
@@ -1219,11 +1219,11 @@ static void php_runkit_function_add_or_update(INTERNAL_FUNCTION_PARAMETERS, int 
 		RETURN_FALSE;
 	}
 
-	if (!php_runkit_parse_args_to_zvals(argc, &args)) {
+	if (!php_fnbind_parse_args_to_zvals(argc, &args)) {
 		RETURN_FALSE;
 	}
 
-	if (!php_runkit_parse_function_arg(argc, args, 1, &source_fe, &arguments, &phpcode, &opt_arg_pos, "Function")) {
+	if (!php_fnbind_parse_function_arg(argc, args, 1, &source_fe, &arguments, &phpcode, &opt_arg_pos, "Function")) {
 		efree(args);
 		RETURN_FALSE;
 	}
@@ -1242,11 +1242,11 @@ static void php_runkit_function_add_or_update(INTERNAL_FUNCTION_PARAMETERS, int 
 		opt_arg_pos++;
 	}
 
-	doc_comment = php_runkit_parse_doc_comment_arg(argc, args, opt_arg_pos);
+	doc_comment = php_fnbind_parse_doc_comment_arg(argc, args, opt_arg_pos);
 
-	return_type = php_runkit_parse_return_type_arg(argc, args, opt_arg_pos + 1);
+	return_type = php_fnbind_parse_return_type_arg(argc, args, opt_arg_pos + 1);
 
-	is_strict = php_runkit_parse_is_strict_arg(argc, args, opt_arg_pos + 2);
+	is_strict = php_fnbind_parse_is_strict_arg(argc, args, opt_arg_pos + 2);
 
 	efree(args);
 	if (!return_type.valid) {
@@ -1268,7 +1268,7 @@ static void php_runkit_function_add_or_update(INTERNAL_FUNCTION_PARAMETERS, int 
 	}
 
 	if (add_or_update == HASH_UPDATE &&
-	    (orig_fe = php_runkit_fetch_function(funcname, PHP_RUNKIT_FETCH_FUNCTION_REMOVE)) == NULL) {
+	    (orig_fe = php_fnbind_fetch_function(funcname, PHP_FNBIND_FETCH_FUNCTION_REMOVE)) == NULL) {
 		RETURN_FALSE;
 	}
 
@@ -1282,7 +1282,7 @@ static void php_runkit_function_add_or_update(INTERNAL_FUNCTION_PARAMETERS, int 
 	}
 
 	if (!source_fe) {
-		if (php_runkit_generate_lambda_function(arguments, return_type.return_type, is_strict.is_strict, phpcode, &source_fe, return_ref) == FAILURE) {
+		if (php_fnbind_generate_lambda_function(arguments, return_type.return_type, is_strict.is_strict, phpcode, &source_fe, return_ref) == FAILURE) {
 			zend_string_release(funcname_lower);
 			RETURN_FALSE;
 		}
@@ -1294,10 +1294,10 @@ static void php_runkit_function_add_or_update(INTERNAL_FUNCTION_PARAMETERS, int 
 		target_function_type = orig_fe->type;
 	} else {
 		// The original type is stored in a hash map - If an internal function is renamed, it has an entry in replaced_internal_functions.
-		target_function_type = RUNKIT_G(replaced_internal_functions)
-			&& zend_hash_exists(RUNKIT_G(replaced_internal_functions), funcname_lower) ? ZEND_INTERNAL_FUNCTION : ZEND_USER_FUNCTION;
+		target_function_type = FNBIND_G(replaced_internal_functions)
+			&& zend_hash_exists(FNBIND_G(replaced_internal_functions), funcname_lower) ? ZEND_INTERNAL_FUNCTION : ZEND_USER_FUNCTION;
 	}
-	func = php_runkit_function_clone(source_fe, funcname, target_function_type);
+	func = php_fnbind_function_clone(source_fe, funcname, target_function_type);
 	//printf("Func function->handler = %llx, op=%s\n", source_fe->type == ZEND_USER_FUNCTION ? (long long)source_fe->internal_function.handler : 0, add_or_update == HASH_ADD ? "add" : "update");
 	func->common.scope = NULL;
 	func->common.fn_flags &= ~ZEND_ACC_CLOSURE;
@@ -1306,31 +1306,31 @@ static void php_runkit_function_add_or_update(INTERNAL_FUNCTION_PARAMETERS, int 
 	    orig_fe && orig_fe->type == ZEND_USER_FUNCTION && orig_fe->op_array.doc_comment) {
 		doc_comment = orig_fe->op_array.doc_comment;
 	}
-	php_runkit_modify_function_doc_comment(func, doc_comment);
+	php_fnbind_modify_function_doc_comment(func, doc_comment);
 
 	if (add_or_update == HASH_UPDATE) {
-		php_runkit_remove_function_from_reflection_objects(orig_fe);
-		php_runkit_destroy_misplaced_internal_function(orig_fe, funcname_lower);
+		php_fnbind_remove_function_from_reflection_objects(orig_fe);
+		php_fnbind_destroy_misplaced_internal_function(orig_fe, funcname_lower);
 
-		php_runkit_clear_all_functions_runtime_cache();
+		php_fnbind_clear_all_functions_runtime_cache();
 
 		/* When redefining or adding a function (which may have been removed before), update the stack sizes it will be called with. */
-		php_runkit_fix_all_hardcoded_stack_sizes(funcname_lower, func);
+		php_fnbind_fix_all_hardcoded_stack_sizes(funcname_lower, func);
 	}
 
-	if (runkit_zend_hash_add_or_update_function_table_ptr(EG(function_table), funcname_lower, func, add_or_update) == NULL) {
+	if (fnbind_zend_hash_add_or_update_function_table_ptr(EG(function_table), funcname_lower, func, add_or_update) == NULL) {
 		php_error_docref(NULL, E_WARNING, "Unable to add new function");
 		zend_string_release(funcname_lower);
 		if (remove_temp) {
-			php_runkit_cleanup_lambda_function();
+			php_fnbind_cleanup_lambda_function();
 		}
 		// TODO: Is there a chance this will accidentally delete the original function?
-		php_runkit_function_dtor(func);
+		php_fnbind_function_dtor(func);
 		RETURN_FALSE;
 	}
 
 	if (remove_temp) {
-		php_runkit_cleanup_lambda_function();
+		php_fnbind_cleanup_lambda_function();
 	}
 
 	if (zend_hash_find(EG(function_table), funcname_lower) == NULL) {
@@ -1350,13 +1350,13 @@ static void php_runkit_function_add_or_update(INTERNAL_FUNCTION_PARAMETERS, int 
    * Functions API *
    ***************** */
 
-/* {{{  proto bool runkit7_function_add(string funcname, string arglist, string code[, bool return_by_reference=false[, string doc_comment = null, [string return_type = null, [bool is_strict = null]]]])
-	proto bool runkit7_function_add(string funcname, closure code[, string doc_comment, [bool is_strict]])
+/* {{{  proto bool fnbind_function_add(string funcname, string arglist, string code[, bool return_by_reference=false[, string doc_comment = null, [string return_type = null, [bool is_strict = null]]]])
+	proto bool fnbind_function_add(string funcname, closure code[, string doc_comment, [bool is_strict]])
 	Add a new function, similar to create_function, but allows specifying name
 	*/
-PHP_FUNCTION(runkit7_function_add)
+PHP_FUNCTION(fnbind_function_add)
 {
-	php_runkit_function_add_or_update(INTERNAL_FUNCTION_PARAM_PASSTHRU, HASH_ADD);
+	php_fnbind_function_add_or_update(INTERNAL_FUNCTION_PARAM_PASSTHRU, HASH_ADD);
 }
 /* }}} */
 

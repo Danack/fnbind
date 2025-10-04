@@ -28,12 +28,12 @@ ARCHITECTURE=${3:-}
 # docker run --rm $DOCKER_IMAGE ci/test_inner_valgrind.sh
 if [[ "$ARCHITECTURE" == i386 ]]; then
 	PHP_IMAGE="$ARCHITECTURE/php"
-	DOCKER_IMAGE_VALGRIND="runkit7-valgrind-test-runner:$ARCHITECTURE-$PHP_VERSION_FULL"
+	DOCKER_IMAGE_VALGRIND="fnbind-valgrind-test-runner:$ARCHITECTURE-$PHP_VERSION_FULL"
 else
 	PHP_IMAGE="php"
-	DOCKER_IMAGE_VALGRIND="runkit7-valgrind-test-runner:$ARCHITECTURE-$PHP_VERSION"
+	DOCKER_IMAGE_VALGRIND="fnbind-valgrind-test-runner:$ARCHITECTURE-$PHP_VERSION"
 fi
 
-DOCKER_IMAGE_VALGRIND=runkit7-valgrind-test-runner:$PHP_VERSION_FULL
+DOCKER_IMAGE_VALGRIND=fnbind-valgrind-test-runner:$PHP_VERSION_FULL
 docker build --build-arg="PHP_IMAGE=$PHP_IMAGE" --build-arg="PHP_VERSION=$PHP_VERSION" --build-arg="PHP_VERSION_FULL=$PHP_VERSION_FULL" --tag="$DOCKER_IMAGE_VALGRIND" -f ci/Dockerfile.valgrind .
 docker run --rm $DOCKER_IMAGE_VALGRIND ci/test_inner_valgrind.sh

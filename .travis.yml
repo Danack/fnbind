@@ -10,9 +10,9 @@ env:
   - CC=clang
   - CC=gcc CXX=g++
   - CC=gcc CXX=g++ VALGRIND=1
-  # Some bugs in runkit only show up without zts enabled. (aka NTS)
+  # Some bugs in fnbind only show up without zts enabled. (aka NTS)
   # Specifying PHP_VERSION is done to keep up to date versions in 7.1 (Does it work?)
-  # Add --enable-session so $_SESSION will exist in runkit superglobal test
+  # Add --enable-session so $_SESSION will exist in fnbind superglobal test
   - CC=gcc CXX=g++ VALGRIND=1 PHP_NTS_USE=1 PHP_CONFIGURE_ARGS='--disable-all --disable-zts --enable-debug --enable-session'
   # The VM implementation is different on 32-bit php. Test those as well.
   - CC=gcc CXX=g++ USE_32BIT=1 VALGRIND=1 PHP_NTS_USE=actually-zts PHP_CONFIGURE_ARGS='--disable-all --enable-maintainer-zts --enable-debug --enable-session'

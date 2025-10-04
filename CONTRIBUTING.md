@@ -8,12 +8,12 @@ Pull requests are welcome, test cases covering bug fixes or new functionality ar
 
 If reporting a crash, please include a minimal file (or link to a project) that can reproduce the issue, as well as the output of `php --version` and `php-config`. (And php.ini settings)
 
-Issues labelled with [help wanted](https://github.com/runkit7/runkit7/labels/help%20wanted) are probably good first issues.
+Issues labelled with [help wanted](https://github.com/fnbind/fnbind/labels/help%20wanted) are probably good first issues.
 
 ## Project layout
 
-Headers are found in `php_runkit*.h`
-Source files are found in `runkit*.c`
+Headers are found in `php_fnbind*.h`
+Source files are found in `fnbind*.c`
 
 `config.m4` (Unix/Linux) and `config.w32` (windows) are used to generate `./configure` and the make file
 `package.xml` contains the configuration for generating a PECL package. It should be updated when new tests or source files are added.
@@ -46,7 +46,7 @@ The representation of internal values(`zval`s) has changed between PHP5 and PHP7
 
 - https://nikic.github.io/2015/05/05/Internal-value-representation-in-PHP-7-part-1.html (Useful background for coding in C)
 - https://nikic.github.io/2015/06/19/Internal-value-representation-in-PHP-7-part-2.html
-- https://nikic.github.io/2017/04/14/PHP-7-Virtual-machine.html (Useful for understanding runkit function/method manipulation)
+- https://nikic.github.io/2017/04/14/PHP-7-Virtual-machine.html (Useful for understanding fnbind function/method manipulation)
 
 This now uses `zend_string`.
 I changed the code to use `zend_string` wherever possible to be consistent.
@@ -56,7 +56,7 @@ Notes on `HashTable`s
 
 - https://nikic.github.io/2014/12/22/PHPs-new-hashtable-implementation.html
 - HashTables no longer use linked lists. They use an array of `Bucket`s instead, and use collision chaining.
-  (TODO: implement `php_runkit_hash_move_to_front`)
+  (TODO: implement `php_fnbind_hash_move_to_front`)
 - The new versions of `zend_hash_*` take `zend_string` pointers instead of pairs of `char*
 - Most `zend_hash_*` now have equivalent `zend_hash_str_*` methods.
   (If I remember correctly, `zend_hash_str_*` methods now taken `strlen` as the length instead of `strlen+1`)

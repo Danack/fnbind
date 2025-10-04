@@ -10,7 +10,7 @@ branches:
                 - master
                 - v3
 
-clone_folder:  c:\projects\runkit7
+clone_folder:  c:\projects\fnbind
 
 install:
         ps: |
@@ -140,7 +140,7 @@ build_script:
                 if (-not (Test-Path c:\build-cache\$dname)) {
                         7z x c:\build-cache\$bname -oc:\build-cache\$dname
                 }
-                cd c:\projects\runkit7
+                cd c:\projects\fnbind
                 $env:PATH = 'c:\build-cache\' + $dname1 + ';' + $env:PATH
                 $env:PATH = 'c:\build-cache\' + $dname + ';' + $env:PATH
                 #echo "@echo off" | Out-File -Encoding "ASCII" task.bat
@@ -148,7 +148,7 @@ build_script:
                 echo "" | Out-File -Encoding "ASCII" task.bat
                 echo "call phpize 2>&1" | Out-File -Encoding "ASCII" -Append task.bat
                 # TODO: what is --enable-debug-pack
-                $cmd = 'call configure --enable-runkit7 --with-prefix=c:\build-cache\' + $dname + ' 2>&1'
+                $cmd = 'call configure --enable-fnbind --with-prefix=c:\build-cache\' + $dname + ' 2>&1'
                 echo $cmd | Out-File -Encoding "ASCII" -Append task.bat
                 echo "set REPORT_EXIT_STATUS=1" | Out-File -Encoding "ASCII" -Append task.bat
                 echo "set NO_INTERACTION=1" | Out-File -Encoding "ASCII" -Append task.bat

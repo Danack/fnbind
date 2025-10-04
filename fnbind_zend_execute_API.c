@@ -1,4 +1,4 @@
-#include "php_runkit_zend_execute_API.h"
+#include "php_fnbind_zend_execute_API.h"
 
 #include "main/php_version.h"
 #include "Zend/zend_API.h"
@@ -13,11 +13,11 @@
 #endif
 
 #if PHP_VERSION_ID >= 70300
-#define RUNKIT_IS_FCI_CACHE_INITIALIZED(fci_cache) ((fci_cache)->function_handler != NULL)
-#define RUNKIT_CLEAR_FCI_CACHE(fci_cache) do {(fci_cache)->function_handler = NULL; } while (0)
+#define FNBIND_IS_FCI_CACHE_INITIALIZED(fci_cache) ((fci_cache)->function_handler != NULL)
+#define FNBIND_CLEAR_FCI_CACHE(fci_cache) do {(fci_cache)->function_handler = NULL; } while (0)
 #else
-#define RUNKIT_IS_FCI_CACHE_INITIALIZED(fci_cache) ((fci_cache)->initialized)
-#define RUNKIT_CLEAR_FCI_CACHE(fci_cache) do {(fci_cache)->initialized = 0; } while (0)
+#define FNBIND_IS_FCI_CACHE_INITIALIZED(fci_cache) ((fci_cache)->initialized)
+#define FNBIND_CLEAR_FCI_CACHE(fci_cache) do {(fci_cache)->initialized = 0; } while (0)
 #endif
 
 #if PHP_VERSION_ID >= 80200
@@ -31,7 +31,7 @@
  *
  * FIXME: Update the signature and implementation to also support named parameters
  */
-int runkit_forward_call_user_function(zend_function *fbc, zend_function *fbc_inner, INTERNAL_FUNCTION_PARAMETERS) /* {{{ */
+int fnbind_forward_call_user_function(zend_function *fbc, zend_function *fbc_inner, INTERNAL_FUNCTION_PARAMETERS) /* {{{ */
 {
 	uint32_t i;
 	zend_execute_data *call, dummy_execute_data;
@@ -41,7 +41,7 @@ int runkit_forward_call_user_function(zend_function *fbc, zend_function *fbc_inn
 	uint32_t call_info;
 	void *object_or_called_scope;
 #endif
-	/* {{{ patch for runkit */
+	/* {{{ patch for fnbind */
 	zend_fcall_info fci = {0};
 	zend_fcall_info_cache *fci_cache = NULL;
 
@@ -55,7 +55,7 @@ int runkit_forward_call_user_function(zend_function *fbc, zend_function *fbc_inn
 #if PHP_VERSION_ID < 80000
 	fci.no_separation = (zend_bool)1;			  // ???
 #endif
-	/* end patch for runkit }}} */
+	/* end patch for fnbind }}} */
 
 	ZVAL_UNDEF(fci.retval);
 
@@ -90,7 +90,7 @@ int runkit_forward_call_user_function(zend_function *fbc, zend_function *fbc_inn
 		EG(current_execute_data) = &dummy_execute_data;
 	}
 
-	if (!fci_cache || !RUNKIT_IS_FCI_CACHE_INITIALIZED(fci_cache)) {
+	if (!fci_cache || !FNBIND_IS_FCI_CACHE_INITIALIZED(fci_cache)) {
 		zend_string *callable_name;
 		char *error = NULL;
 
@@ -232,7 +232,7 @@ int runkit_forward_call_user_function(zend_function *fbc, zend_function *fbc_inn
 		zend_execute_ex(call);
 		if (call_via_handler) {
 			/* We must re-initialize function again */
-			RUNKIT_CLEAR_FCI_CACHE(fci_cache);
+			FNBIND_CLEAR_FCI_CACHE(fci_cache);
 		}
 	} else if (func->type == ZEND_INTERNAL_FUNCTION) {
 		int call_via_handler = (func->common.fn_flags & ZEND_ACC_CALL_VIA_TRAMPOLINE) != 0;
@@ -262,7 +262,7 @@ int runkit_forward_call_user_function(zend_function *fbc, zend_function *fbc_inn
 
 		if (call_via_handler) {
 			/* We must re-initialize function again */
-			RUNKIT_CLEAR_FCI_CACHE(fci_cache);
+			FNBIND_CLEAR_FCI_CACHE(fci_cache);
 		}
 	} else { /* ZEND_OVERLOADED_FUNCTION */
 #if PHP_VERSION_ID < 70400

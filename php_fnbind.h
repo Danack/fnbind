@@ -7,19 +7,19 @@
   | that is bundled with this package in the file LICENSE, and is        |
   | available through the world-wide-web at the following url:           |
   | http://www.opensource.org/licenses/BSD-3-Clause                      |
-  | or at https://github.com/runkit7/runkit7/blob/master/LICENSE         |
+  | or at https://github.com/fnbind/fnbind/blob/master/LICENSE         |
   +----------------------------------------------------------------------+
   | Author: Sara Golemon <pollita@php.net>                               |
   | Modified by Dmitry Zenovich <dzenovich@gmail.com>                    |
-  | Modified for php7 "runkit7" by Tyson Andre<tysonandre775@hotmail.com>|
+  | Modified for php7 "fnbind" by Tyson Andre<tysonandre775@hotmail.com>|
   +----------------------------------------------------------------------+
 */
 
-#ifndef PHP_RUNKIT7_H
-#define PHP_RUNKIT7_H
+#ifndef PHP_FNBIND_H
+#define PHP_FNBIND_H
 
-#ifndef phpext_runkit7_ptr
-extern zend_module_entry runkit7_module_entry;
-#define phpext_runkit7_ptr &runkit7_module_entry
+#ifndef phpext_fnbind_ptr
+extern zend_module_entry fnbind_module_entry;
+#define phpext_fnbind_ptr &fnbind_module_entry
 #endif
-#endif	/* PHP_RUNKIT7_H */
+#endif	/* PHP_FNBIND_H */

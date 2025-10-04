@@ -7,18 +7,18 @@
   | that is bundled with this package in the file LICENSE, and is        |
   | available through the world-wide-web at the following url:           |
   | http://www.opensource.org/licenses/BSD-3-Clause                      |
-  | or at https://github.com/runkit7/runkit7/blob/master/LICENSE         |
+  | or at https://github.com/fnbind/fnbind/blob/master/LICENSE         |
   +----------------------------------------------------------------------+
   | Author: Dmitry Zenovich <dzenovich@gmail.com>                        |
   | Modified for php7 "runkit7" by Tyson Andre<tysonandre775@hotmail.com>|
   +----------------------------------------------------------------------+
 */
 
-#ifndef PHP_RUNKIT_ZVAL_H
-#define PHP_RUNKIT_ZVAL_H
+#ifndef PHP_FNBIND_ZVAL_H
+#define PHP_FNBIND_ZVAL_H
 
-/* {{{ php_runkit_zval_resolve_class_constant */
-inline static void php_runkit_zval_resolve_class_constant(zval *p, zend_class_entry *ce)
+/* {{{ php_fnbind_zval_resolve_class_constant */
+inline static void php_fnbind_zval_resolve_class_constant(zval *p, zend_class_entry *ce)
 {
 	if (Z_CONSTANT_P(p)) {
         // TODO: What does this do?
@@ -28,12 +28,12 @@ inline static void php_runkit_zval_resolve_class_constant(zval *p, zend_class_en
 }
 /* }}} */
 
-#define PHP_RUNKIT_ZVAL_CONVERT_TO_STRING_IF_NEEDED(val, val_copy) \
+#define PHP_FNBIND_ZVAL_CONVERT_TO_STRING_IF_NEEDED(val, val_copy) \
 	if (Z_TYPE_P(member) != IS_STRING) { \
 		val_copy = *val; \
 		val = &val_copy; \
 		zval_copy_ctor(val); \
-		val->RUNKIT_REFCOUNT = 1; \
+		val->FNBIND_REFCOUNT = 1; \
 		convert_to_string(val); \
 	}
 

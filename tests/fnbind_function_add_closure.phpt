@@ -1,8 +1,8 @@
 --TEST--
-runkit7_method_add() function with closure
+fnbind_method_add() function with closure
 --SKIPIF--
 <?php
-	if(!extension_loaded("runkit7") ) print "skip";
+	if(!extension_loaded("fnbind") ) print "skip";
 ?>
 --INI--
 display_errors=on
@@ -13,7 +13,7 @@ class test {
 	public function run() {
 		$c = 'use';
 		$d = 'ref_use';
-		runkit7_function_add('runkit_function',
+		fnbind_function_add('fnbind_function',
 			function($a, $b = "bar") use ($c, &$d) {
 				static $is="is";
 				global $g;
@@ -27,7 +27,7 @@ class test {
 				} catch (Error $e) {
 					echo "\n";
 					// In PHP 7.1, they treated $this more consistently. It was also possible to declare variables called $this in php <= 7.0
-					// Since this is a function created by runkit_function_add, not a method,
+					// Since this is a function created by fnbind_function_add, not a method,
 					// it is guaranteed that it is not an object context (A function written normally would also throw an Error, so this is expected)
 					if ($e->getMessage() !== 'Using $this when not in object context') {
 						throw $e;
@@ -37,14 +37,14 @@ class test {
 				}
 			}
 		);
-		runkit_function('foo', 'bar');
+		fnbind_function('foo', 'bar');
 		echo "d after call is $d\n";
 	}
 }
 $g = 'global';
 $t = new test();
 $t->run();
-runkit_function('foo','bar');
+fnbind_function('foo','bar');
 ?>
 --EXPECTREGEX--
 a is foo

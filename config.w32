@@ -4,21 +4,21 @@
 // This file may contain errors.
 // I do not care about Windows, though will take PRs.
 
-ARG_ENABLE("runkit7", "Enable runkit7 support", "no");
+ARG_ENABLE("fnbind", "Enable fnbind support", "no");
 
-if (PHP_RUNKIT7 != "no") {
+if (PHP_FNBIND != "no") {
     var dll = get_define('PHPDLL');
     var is_php5 = null != dll.match(/^php5/);
     if (is_php5) {
         ERROR("Runkit7 supports PHP 7.1 and newer. It does not support PHP 5");
     }
 
-    AC_DEFINE('HAVE_RUNKIT7', 1);
+    AC_DEFINE('HAVE_FNBIND', 1);
 
-    PHP_INSTALL_HEADERS('ext/runkit7', 'php_runkit7.h php_runkit_hash.h php_runkit_zend_execute_API.h php_runkit_zval.h runkit.h');
+    PHP_INSTALL_HEADERS('ext/fnbind', 'php_fnbind.h php_fnbind_hash.h php_fnbind_zend_execute_API.h php_fnbind_zval.h fnbind.h');
 
-    EXTENSION("runkit7", "runkit.c " +
-                        "runkit_common.c " +
-                        "runkit_functions.c " +
-                        "runkit_zend_execute_API.c ");
+    EXTENSION("fnbind", "fnbind.c " +
+                        "fnbind_common.c " +
+                        "fnbind_functions.c " +
+                        "fnbind_zend_execute_API.c ");
 }

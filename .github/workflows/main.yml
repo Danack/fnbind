@@ -1,4 +1,4 @@
-# Runs runkit7's tests and verifies that the package can be built.
+# Runs fnbind's tests and verifies that the package can be built.
 
 name: CI
 

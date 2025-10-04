@@ -3,7 +3,7 @@
 http://pear.php.net/dtd/tasks-1.0.xsd
 http://pear.php.net/dtd/package-2.0
 http://pear.php.net/dtd/package-2.0.xsd">
- <name>runkit7</name>
+ <name>fnbind</name>
  <channel>pecl.php.net</channel>
  <summary>Runkit7 : For all those things you.... probably shouldn&apos;t have been doing anyway.... but surely do!</summary>
  <description>Replace, rename, and remove user defined functions, methods, and constants.
@@ -43,191 +43,191 @@ Define customized superglobal variables for general purpose use.
     <file name="bug57649.inc" role="test" />
     <file name="bug57658.phpt" role="test" />
     <file name="namespaces.phpt" role="test" />
-    <file name="runkit_add_magic_methods.phpt" role="test" />
-    <file name="runkit_add_magic_serialize_method_ignored_for_common_classes.phpt" role="test" />
-    <file name="runkit_add_old_style_ctor.phpt" role="test" />
-    <file name="runkit_add_old_style_ctor1.phpt" role="test" />
-    <file name="runkit_add_old_style_ctor_by_adopting.phpt" role="test" />
-    <file name="runkit_add_old_style_ctor_by_copying.phpt" role="test" />
-    <file name="runkit_adopt_emancipate_and_inheritance.phpt" role="test" />
-    <file name="runkit_and_superglobals.phpt" role="test" />
-    <file name="runkit_arginfo.phpt" role="test" />
-    <file name="runkit_class_adopt.phpt" role="test" />
-    <file name="runkit_class_adopt_and_properties.phpt" role="test" />
-    <file name="runkit_class_emancipate.phpt" role="test" />
-    <file name="runkit_class_emancipate_and_reflection.phpt" role="test" />
-    <file name="runkit_constant_add.phpt" role="test" />
-    <file name="runkit_constant_add_array.phpt" role="test" />
-    <file name="runkit_constant_add_array_alias.phpt" role="test" />
-    <file name="runkit_constant_add_array_to_class.phpt" role="test" />
-    <file name="runkit_constant_add_object_php81.phpt" role="test" />
-    <file name="runkit_constant_add_protected.phpt" role="test" />
-    <file name="runkit_constant_add_protected_alias.phpt" role="test" />
-    <file name="runkit_constant_add_to_class.phpt" role="test" />
-    <file name="runkit_constant_redefine.phpt" role="test" />
-    <file name="runkit_constant_redefine_in_class.phpt" role="test" />
-    <file name="runkit_constant_redefine_protected_across_file.inc" role="test" />
-    <file name="runkit_constant_redefine_protected_across_file.phpt" role="test" />
-    <file name="runkit_constant_remove.phpt" role="test" />
-    <file name="runkit_constant_remove_from_class.phpt" role="test" />
-    <file name="runkit_constant_remove_from_class_without_inlining.phpt" role="test" />
-    <file name="runkit_constant_remove_from_ns.phpt" role="test" />
-    <file name="runkit_constants_manipulations_and_cache.phpt" role="test" />
-    <file name="runkit_default_property_add.phpt" role="test" />
-    <file name="runkit_default_property_add_and_remove_for_class_with_dynamic_properties.phpt" role="test" />
-    <file name="runkit_default_property_add_and_remove_for_class_with_dynamic_properties_overriding_in_objects.phpt" role="test" />
-    <file name="runkit_default_property_add_instance.phpt" role="test" />
-    <file name="runkit_default_property_add_overriding_objects.phpt" role="test" />
-    <file name="runkit_default_property_add_to_subclasses.phpt" role="test" />
-    <file name="runkit_default_property_add_to_subclasses_overriding_objects.phpt" role="test" />
-    <file name="runkit_default_property_remove.phpt" role="test" />
-    <file name="runkit_default_property_remove_and_add_for_class_with_dynamic_properties.phpt" role="test" />
-    <file name="runkit_default_property_remove_and_add_for_class_with_dynamic_properties_overriding_objects.phpt" role="test" />
-    <file name="runkit_default_property_remove_and_reflection.phpt" role="test" />
-    <file name="runkit_default_property_remove_from_subclasses.phpt" role="test" />
-    <file name="runkit_default_property_remove_from_subclasses_overriding_objects.phpt" role="test" />
-    <file name="runkit_default_property_remove_inheritance.phpt" role="test" />
-    <file name="runkit_default_property_remove_inheritance_overriding_objects.phpt" role="test" />
-    <file name="runkit_default_property_remove_overriding_objects.phpt" role="test" />
-    <file name="runkit_default_property_remove_private_and_inheritance.phpt" role="test" />
-    <file name="runkit_default_property_remove_private_and_inheritance_overriding_objects.phpt" role="test" />
-    <file name="runkit_default_property_remove_private_shadow_and_inheritance.phpt" role="test" />
-    <file name="runkit_default_property_remove_private_shadow_and_inheritance54.phpt" role="test" />
-    <file name="runkit_default_property_remove_private_shadow_and_inheritance_overriding_objects.phpt" role="test" />
-    <file name="runkit_default_property_remove_simple.phpt" role="test" />
-    <file name="runkit_finally.phpt" role="test" />
-    <file name="runkit_fpm_internal_function_restore.phpt" role="test" />
-    <file name="runkit_function_add.phpt" role="test" />
-    <file name="runkit_function_add_alias.phpt" role="test" />
-    <file name="runkit_function_add_and_doc_comment.phpt" role="test" />
-    <file name="runkit_function_add_closure.phpt" role="test" />
-    <file name="runkit_function_add_closure_and_doc_comment.phpt" role="test" />
-    <file name="runkit_function_add_closure_and_doc_comment_from_closure.phpt" role="test" />
-    <file name="runkit_function_add_return_type.phpt" role="test" />
-    <file name="runkit_function_add_return_type_invalid.phpt" role="test" />
-    <file name="runkit_function_copy.phpt" role="test" />
-    <file name="runkit_function_copy_8.phpt" role="test" />
-    <file name="runkit_function_copy_alias.phpt" role="test" />
-    <file name="runkit_function_redefine.phpt" role="test" />
-    <file name="runkit_function_redefine_alias.phpt" role="test" />
-    <file name="runkit_function_redefine_and_doc_comment.phpt" role="test" />
-    <file name="runkit_function_redefine_and_reflection.phpt" role="test" />
-    <file name="runkit_function_redefine_and_revert.phpt" role="test" />
-    <file name="runkit_function_redefine_and_revert_closure.phpt" role="test" />
-    <file name="runkit_function_redefine_closure_and_doc_comment.phpt" role="test" />
-    <file name="runkit_function_redefine_closure_and_doc_comment_from_closure.phpt" role="test" />
-    <file name="runkit_function_redefine_closure_static.phpt" role="test" />
-    <file name="runkit_function_redefine_from_anonymous.phpt" role="test" />
-    <file name="runkit_function_redefine_using_undef.phpt" role="test" />
-    <file name="runkit_function_redefine_var_dump.phpt" role="test" />
-    <file name="runkit_function_remove.phpt" role="test" />
-    <file name="runkit_function_remove_alias.phpt" role="test" />
-    <file name="runkit_function_remove_and_reflection.phpt" role="test" />
-    <file name="runkit_function_remove_and_reflection_parameter.phpt" role="test" />
-    <file name="runkit_function_rename.phpt" role="test" />
-    <file name="runkit_function_rename_alias.phpt" role="test" />
-    <file name="runkit_function_rename_and_reflection.phpt" role="test" />
-    <file name="runkit_function_rename_corruption.phpt" role="test" />
-    <file name="runkit_function_rename_corruption2.phpt" role="test" />
-    <file name="runkit_function_rename_internal.phpt" role="test" />
-    <file name="runkit_function_rename_large_switch.phpt" role="test" />
-    <file name="runkit_function_rename_redefine_add_remove.phpt" role="test" />
-    <file name="runkit_function_variadic.phpt" role="test" />
-    <file name="runkit_function_variadic_strict.phpt" role="test" />
-    <file name="runkit_function_variadic_typed.phpt" role="test" />
-    <file name="runkit_functions_returning_by_reference.phpt" role="test" />
-    <file name="runkit_method_add.phpt" role="test" />
-    <file name="runkit_method_add_7_php8.phpt" role="test" />
-    <file name="runkit_method_add_alias.phpt" role="test" />
-    <file name="runkit_method_add_and_doc_comment.phpt" role="test" />
-    <file name="runkit_method_add_closure.phpt" role="test" />
-    <file name="runkit_method_add_closure2.phpt" role="test" />
-    <file name="runkit_method_add_closure_and_doc_comment.phpt" role="test" />
-    <file name="runkit_method_add_closure_and_doc_comment_from_closure.phpt" role="test" />
-    <file name="runkit_method_add_closure_and_flags.phpt" role="test" />
-    <file name="runkit_method_add_closure_php80.phpt" role="test" />
-    <file name="runkit_method_add_overriding_parent_method.phpt" role="test" />
-    <file name="runkit_method_add_php73_bug.phpt" role="test" />
-    <file name="runkit_method_add_return_type.phpt" role="test" />
-    <file name="runkit_method_add_return_type_invalid.phpt" role="test" />
-    <file name="runkit_method_copy.phpt" role="test" />
-    <file name="runkit_method_copy_alias.phpt" role="test" />
-    <file name="runkit_method_copy_and_doc_comment.phpt" role="test" />
-    <file name="runkit_method_copy_and_doc_comment_leak.phpt" role="test" />
-    <file name="runkit_method_copy_uninit_read.phpt" role="test" />
-    <file name="runkit_method_redefine.phpt" role="test" />
-    <file name="runkit_method_redefine_alias.phpt" role="test" />
-    <file name="runkit_method_redefine_and_doc_comment.phpt" role="test" />
-    <file name="runkit_method_redefine_and_reflection.phpt" role="test" />
-    <file name="runkit_method_redefine_and_reflection_with_inheritance.phpt" role="test" />
-    <file name="runkit_method_redefine_closure_and_doc_comment.phpt" role="test" />
-    <file name="runkit_method_redefine_closure_and_doc_comment_from_closure.phpt" role="test" />
-    <file name="runkit_method_redefine_protected.phpt" role="test" />
-    <file name="runkit_method_redefine_update_proto.phpt" role="test" />
-    <file name="runkit_method_redefine_update_proto2.phpt" role="test" />
-    <file name="runkit_method_redefine_with_static_vars.phpt" role="test" />
-    <file name="runkit_method_remove.phpt" role="test" />
-    <file name="runkit_method_remove_alias.phpt" role="test" />
-    <file name="runkit_method_remove_and_reflection.phpt" role="test" />
-    <file name="runkit_method_remove_and_reflection_parameter.phpt" role="test" />
-    <file name="runkit_method_remove_and_reflection_parameter_with_inheritance.phpt" role="test" />
-    <file name="runkit_method_remove_and_reflection_with_inheritance.phpt" role="test" />
-    <file name="runkit_method_remove_static.phpt" role="test" />
-    <file name="runkit_method_rename.phpt" role="test" />
-    <file name="runkit_method_rename_002.phpt" role="test" />
-    <file name="runkit_method_rename_alias.phpt" role="test" />
-    <file name="runkit_method_rename_and_access.phpt" role="test" />
-    <file name="runkit_method_rename_and_reflection.phpt" role="test" />
-    <file name="runkit_method_rename_inheritance.phpt" role="test" />
-    <file name="runkit_method_rename_repeated.phpt" role="test" />
-    <file name="runkit_method_rename_static.phpt" role="test" />
-    <file name="runkit_method_variadic.phpt" role="test" />
-    <file name="runkit_method_variadic_strict.phpt" role="test" />
-    <file name="runkit_method_variadic_typed.phpt" role="test" />
-    <file name="runkit_methods_redefining_and_cache.inc" role="test" />
-    <file name="runkit_methods_returning_by_reference.phpt" role="test" />
-    <file name="runkit_redefine_old_style_ctor.phpt" role="test" />
-    <file name="runkit_redefine_old_style_ctor_php8.phpt" role="test" />
-    <file name="runkit_remove_magic_call_method.phpt" role="test" />
-    <file name="runkit_remove_magic_callstatic_method.phpt" role="test" />
-    <file name="runkit_remove_magic_serialize_method.phpt" role="test" />
-    <file name="runkit_remove_magic_tostring_method.phpt" role="test" />
-    <file name="runkit_remove_magic_tostring_method_php74.phpt" role="test" />
-    <file name="runkit_remove_magic_tostring_method_php80.phpt" role="test" />
-    <file name="runkit_remove_magic_unserialize_method.phpt" role="test" />
-    <file name="runkit_static_property_add.phpt" role="test" />
-    <file name="runkit_static_property_add_existing.phpt" role="test" />
-    <file name="runkit_static_property_add_single.phpt" role="test" />
-    <file name="runkit_static_property_add_to_subclasses.phpt" role="test" />
-    <file name="runkit_static_vars.phpt" role="test" />
-    <file name="runkit_static_vars_php81.phpt" role="test" />
-    <file name="runkit_superglobals.phpt" role="test" />
-    <file name="runkit_superglobals_obj.phpt" role="test" />
-    <file name="runkit_superglobals_obj_alias.phpt" role="test" />
-    <file name="runkit_superglobals_obj_alias_php81.phpt" role="test" />
-    <file name="runkit_superglobals_obj_php81.phpt" role="test" />
-    <file name="runkit_user_functions_on_shutdown.phpt" role="test" />
-    <file name="runkit_zval_inspect.phpt" role="test" />
-    <file name="runkit_zval_inspect_alias.phpt" role="test" />
+    <file name="fnbind_add_magic_methods.phpt" role="test" />
+    <file name="fnbind_add_magic_serialize_method_ignored_for_common_classes.phpt" role="test" />
+    <file name="fnbind_add_old_style_ctor.phpt" role="test" />
+    <file name="fnbind_add_old_style_ctor1.phpt" role="test" />
+    <file name="fnbind_add_old_style_ctor_by_adopting.phpt" role="test" />
+    <file name="fnbind_add_old_style_ctor_by_copying.phpt" role="test" />
+    <file name="fnbind_adopt_emancipate_and_inheritance.phpt" role="test" />
+    <file name="fnbind_and_superglobals.phpt" role="test" />
+    <file name="fnbind_arginfo.phpt" role="test" />
+    <file name="fnbind_class_adopt.phpt" role="test" />
+    <file name="fnbind_class_adopt_and_properties.phpt" role="test" />
+    <file name="fnbind_class_emancipate.phpt" role="test" />
+    <file name="fnbind_class_emancipate_and_reflection.phpt" role="test" />
+    <file name="fnbind_constant_add.phpt" role="test" />
+    <file name="fnbind_constant_add_array.phpt" role="test" />
+    <file name="fnbind_constant_add_array_alias.phpt" role="test" />
+    <file name="fnbind_constant_add_array_to_class.phpt" role="test" />
+    <file name="fnbind_constant_add_object_php81.phpt" role="test" />
+    <file name="fnbind_constant_add_protected.phpt" role="test" />
+    <file name="fnbind_constant_add_protected_alias.phpt" role="test" />
+    <file name="fnbind_constant_add_to_class.phpt" role="test" />
+    <file name="fnbind_constant_redefine.phpt" role="test" />
+    <file name="fnbind_constant_redefine_in_class.phpt" role="test" />
+    <file name="fnbind_constant_redefine_protected_across_file.inc" role="test" />
+    <file name="fnbind_constant_redefine_protected_across_file.phpt" role="test" />
+    <file name="fnbind_constant_remove.phpt" role="test" />
+    <file name="fnbind_constant_remove_from_class.phpt" role="test" />
+    <file name="fnbind_constant_remove_from_class_without_inlining.phpt" role="test" />
+    <file name="fnbind_constant_remove_from_ns.phpt" role="test" />
+    <file name="fnbind_constants_manipulations_and_cache.phpt" role="test" />
+    <file name="fnbind_default_property_add.phpt" role="test" />
+    <file name="fnbind_default_property_add_and_remove_for_class_with_dynamic_properties.phpt" role="test" />
+    <file name="fnbind_default_property_add_and_remove_for_class_with_dynamic_properties_overriding_in_objects.phpt" role="test" />
+    <file name="fnbind_default_property_add_instance.phpt" role="test" />
+    <file name="fnbind_default_property_add_overriding_objects.phpt" role="test" />
+    <file name="fnbind_default_property_add_to_subclasses.phpt" role="test" />
+    <file name="fnbind_default_property_add_to_subclasses_overriding_objects.phpt" role="test" />
+    <file name="fnbind_default_property_remove.phpt" role="test" />
+    <file name="fnbind_default_property_remove_and_add_for_class_with_dynamic_properties.phpt" role="test" />
+    <file name="fnbind_default_property_remove_and_add_for_class_with_dynamic_properties_overriding_objects.phpt" role="test" />
+    <file name="fnbind_default_property_remove_and_reflection.phpt" role="test" />
+    <file name="fnbind_default_property_remove_from_subclasses.phpt" role="test" />
+    <file name="fnbind_default_property_remove_from_subclasses_overriding_objects.phpt" role="test" />
+    <file name="fnbind_default_property_remove_inheritance.phpt" role="test" />
+    <file name="fnbind_default_property_remove_inheritance_overriding_objects.phpt" role="test" />
+    <file name="fnbind_default_property_remove_overriding_objects.phpt" role="test" />
+    <file name="fnbind_default_property_remove_private_and_inheritance.phpt" role="test" />
+    <file name="fnbind_default_property_remove_private_and_inheritance_overriding_objects.phpt" role="test" />
+    <file name="fnbind_default_property_remove_private_shadow_and_inheritance.phpt" role="test" />
+    <file name="fnbind_default_property_remove_private_shadow_and_inheritance54.phpt" role="test" />
+    <file name="fnbind_default_property_remove_private_shadow_and_inheritance_overriding_objects.phpt" role="test" />
+    <file name="fnbind_default_property_remove_simple.phpt" role="test" />
+    <file name="fnbind_finally.phpt" role="test" />
+    <file name="fnbind_fpm_internal_function_restore.phpt" role="test" />
+    <file name="fnbind_function_add.phpt" role="test" />
+    <file name="fnbind_function_add_alias.phpt" role="test" />
+    <file name="fnbind_function_add_and_doc_comment.phpt" role="test" />
+    <file name="fnbind_function_add_closure.phpt" role="test" />
+    <file name="fnbind_function_add_closure_and_doc_comment.phpt" role="test" />
+    <file name="fnbind_function_add_closure_and_doc_comment_from_closure.phpt" role="test" />
+    <file name="fnbind_function_add_return_type.phpt" role="test" />
+    <file name="fnbind_function_add_return_type_invalid.phpt" role="test" />
+    <file name="fnbind_function_copy.phpt" role="test" />
+    <file name="fnbind_function_copy_8.phpt" role="test" />
+    <file name="fnbind_function_copy_alias.phpt" role="test" />
+    <file name="fnbind_function_redefine.phpt" role="test" />
+    <file name="fnbind_function_redefine_alias.phpt" role="test" />
+    <file name="fnbind_function_redefine_and_doc_comment.phpt" role="test" />
+    <file name="fnbind_function_redefine_and_reflection.phpt" role="test" />
+    <file name="fnbind_function_redefine_and_revert.phpt" role="test" />
+    <file name="fnbind_function_redefine_and_revert_closure.phpt" role="test" />
+    <file name="fnbind_function_redefine_closure_and_doc_comment.phpt" role="test" />
+    <file name="fnbind_function_redefine_closure_and_doc_comment_from_closure.phpt" role="test" />
+    <file name="fnbind_function_redefine_closure_static.phpt" role="test" />
+    <file name="fnbind_function_redefine_from_anonymous.phpt" role="test" />
+    <file name="fnbind_function_redefine_using_undef.phpt" role="test" />
+    <file name="fnbind_function_redefine_var_dump.phpt" role="test" />
+    <file name="fnbind_function_remove.phpt" role="test" />
+    <file name="fnbind_function_remove_alias.phpt" role="test" />
+    <file name="fnbind_function_remove_and_reflection.phpt" role="test" />
+    <file name="fnbind_function_remove_and_reflection_parameter.phpt" role="test" />
+    <file name="fnbind_function_rename.phpt" role="test" />
+    <file name="fnbind_function_rename_alias.phpt" role="test" />
+    <file name="fnbind_function_rename_and_reflection.phpt" role="test" />
+    <file name="fnbind_function_rename_corruption.phpt" role="test" />
+    <file name="fnbind_function_rename_corruption2.phpt" role="test" />
+    <file name="fnbind_function_rename_internal.phpt" role="test" />
+    <file name="fnbind_function_rename_large_switch.phpt" role="test" />
+    <file name="fnbind_function_rename_redefine_add_remove.phpt" role="test" />
+    <file name="fnbind_function_variadic.phpt" role="test" />
+    <file name="fnbind_function_variadic_strict.phpt" role="test" />
+    <file name="fnbind_function_variadic_typed.phpt" role="test" />
+    <file name="fnbind_functions_returning_by_reference.phpt" role="test" />
+    <file name="fnbind_method_add.phpt" role="test" />
+    <file name="fnbind_method_add_7_php8.phpt" role="test" />
+    <file name="fnbind_method_add_alias.phpt" role="test" />
+    <file name="fnbind_method_add_and_doc_comment.phpt" role="test" />
+    <file name="fnbind_method_add_closure.phpt" role="test" />
+    <file name="fnbind_method_add_closure2.phpt" role="test" />
+    <file name="fnbind_method_add_closure_and_doc_comment.phpt" role="test" />
+    <file name="fnbind_method_add_closure_and_doc_comment_from_closure.phpt" role="test" />
+    <file name="fnbind_method_add_closure_and_flags.phpt" role="test" />
+    <file name="fnbind_method_add_closure_php80.phpt" role="test" />
+    <file name="fnbind_method_add_overriding_parent_method.phpt" role="test" />
+    <file name="fnbind_method_add_php73_bug.phpt" role="test" />
+    <file name="fnbind_method_add_return_type.phpt" role="test" />
+    <file name="fnbind_method_add_return_type_invalid.phpt" role="test" />
+    <file name="fnbind_method_copy.phpt" role="test" />
+    <file name="fnbind_method_copy_alias.phpt" role="test" />
+    <file name="fnbind_method_copy_and_doc_comment.phpt" role="test" />
+    <file name="fnbind_method_copy_and_doc_comment_leak.phpt" role="test" />
+    <file name="fnbind_method_copy_uninit_read.phpt" role="test" />
+    <file name="fnbind_method_redefine.phpt" role="test" />
+    <file name="fnbind_method_redefine_alias.phpt" role="test" />
+    <file name="fnbind_method_redefine_and_doc_comment.phpt" role="test" />
+    <file name="fnbind_method_redefine_and_reflection.phpt" role="test" />
+    <file name="fnbind_method_redefine_and_reflection_with_inheritance.phpt" role="test" />
+    <file name="fnbind_method_redefine_closure_and_doc_comment.phpt" role="test" />
+    <file name="fnbind_method_redefine_closure_and_doc_comment_from_closure.phpt" role="test" />
+    <file name="fnbind_method_redefine_protected.phpt" role="test" />
+    <file name="fnbind_method_redefine_update_proto.phpt" role="test" />
+    <file name="fnbind_method_redefine_update_proto2.phpt" role="test" />
+    <file name="fnbind_method_redefine_with_static_vars.phpt" role="test" />
+    <file name="fnbind_method_remove.phpt" role="test" />
+    <file name="fnbind_method_remove_alias.phpt" role="test" />
+    <file name="fnbind_method_remove_and_reflection.phpt" role="test" />
+    <file name="fnbind_method_remove_and_reflection_parameter.phpt" role="test" />
+    <file name="fnbind_method_remove_and_reflection_parameter_with_inheritance.phpt" role="test" />
+    <file name="fnbind_method_remove_and_reflection_with_inheritance.phpt" role="test" />
+    <file name="fnbind_method_remove_static.phpt" role="test" />
+    <file name="fnbind_method_rename.phpt" role="test" />
+    <file name="fnbind_method_rename_002.phpt" role="test" />
+    <file name="fnbind_method_rename_alias.phpt" role="test" />
+    <file name="fnbind_method_rename_and_access.phpt" role="test" />
+    <file name="fnbind_method_rename_and_reflection.phpt" role="test" />
+    <file name="fnbind_method_rename_inheritance.phpt" role="test" />
+    <file name="fnbind_method_rename_repeated.phpt" role="test" />
+    <file name="fnbind_method_rename_static.phpt" role="test" />
+    <file name="fnbind_method_variadic.phpt" role="test" />
+    <file name="fnbind_method_variadic_strict.phpt" role="test" />
+    <file name="fnbind_method_variadic_typed.phpt" role="test" />
+    <file name="fnbind_methods_redefining_and_cache.inc" role="test" />
+    <file name="fnbind_methods_returning_by_reference.phpt" role="test" />
+    <file name="fnbind_redefine_old_style_ctor.phpt" role="test" />
+    <file name="fnbind_redefine_old_style_ctor_php8.phpt" role="test" />
+    <file name="fnbind_remove_magic_call_method.phpt" role="test" />
+    <file name="fnbind_remove_magic_callstatic_method.phpt" role="test" />
+    <file name="fnbind_remove_magic_serialize_method.phpt" role="test" />
+    <file name="fnbind_remove_magic_tostring_method.phpt" role="test" />
+    <file name="fnbind_remove_magic_tostring_method_php74.phpt" role="test" />
+    <file name="fnbind_remove_magic_tostring_method_php80.phpt" role="test" />
+    <file name="fnbind_remove_magic_unserialize_method.phpt" role="test" />
+    <file name="fnbind_static_property_add.phpt" role="test" />
+    <file name="fnbind_static_property_add_existing.phpt" role="test" />
+    <file name="fnbind_static_property_add_single.phpt" role="test" />
+    <file name="fnbind_static_property_add_to_subclasses.phpt" role="test" />
+    <file name="fnbind_static_vars.phpt" role="test" />
+    <file name="fnbind_static_vars_php81.phpt" role="test" />
+    <file name="fnbind_superglobals.phpt" role="test" />
+    <file name="fnbind_superglobals_obj.phpt" role="test" />
+    <file name="fnbind_superglobals_obj_alias.phpt" role="test" />
+    <file name="fnbind_superglobals_obj_alias_php81.phpt" role="test" />
+    <file name="fnbind_superglobals_obj_php81.phpt" role="test" />
+    <file name="fnbind_user_functions_on_shutdown.phpt" role="test" />
+    <file name="fnbind_zval_inspect.phpt" role="test" />
+    <file name="fnbind_zval_inspect_alias.phpt" role="test" />
    </dir> <!-- //tests -->
    <file name="config.m4" role="src" />
    <file name="config.w32" role="src" />
    <file name="Makefile.frag" role="src" />
-   <file name="runkit.h" role="src" />
-   <file name="runkit7.stub.php" role="src" />
-   <file name="runkit7_arginfo.h" role="src" />
-   <file name="php_runkit7.h" role="src" />
-   <file name="php_runkit_hash.h" role="src" />
-   <file name="php_runkit_zend_execute_API.h" role="src" />
-   <file name="php_runkit_zval.h" role="src" />
+   <file name="fnbind.h" role="src" />
+   <file name="fnbind.stub.php" role="src" />
+   <file name="fnbind_arginfo.h" role="src" />
+   <file name="php_fnbind.h" role="src" />
+   <file name="php_fnbind_hash.h" role="src" />
+   <file name="php_fnbind_zend_execute_API.h" role="src" />
+   <file name="php_fnbind_zval.h" role="src" />
    <file name="LICENSE" role="doc" />
    <file name="LICENSE.ZEND" role="doc" />
    <file name="README.md" role="doc" />
    <file name="UPGRADING_TO_3.md" role="doc" />
-   <file name="runkit.c" role="src" />
-   <file name="runkit_common.c" role="src" />
-   <file name="runkit_functions.c" role="src" />
-   <file name="runkit_zend_execute_API.c" role="src" />
+   <file name="fnbind.c" role="src" />
+   <file name="fnbind_common.c" role="src" />
+   <file name="fnbind_functions.c" role="src" />
+   <file name="fnbind_zend_execute_API.c" role="src" />
   </dir> <!-- / -->
  </contents>
  <dependencies>
@@ -240,7 +240,7 @@ Define customized superglobal variables for general purpose use.
    </pearinstaller>
   </required>
  </dependencies>
- <providesextension>runkit7</providesextension>
+ <providesextension>fnbind</providesextension>
  <extsrcrelease />
  <changelog>
   <release>
@@ -255,7 +255,7 @@ Define customized superglobal variables for general purpose use.
    </stability>
    <license uri="http://www.opensource.org/licenses/BSD-3-Clause">BSD License (3 Clause)</license>
    <notes>
-- Make version of runkit7 in reflection match PECL version.
+- Make version of fnbind in reflection match PECL version.
    </notes>
   </release>
   <release>
@@ -287,12 +287,12 @@ Define customized superglobal variables for general purpose use.
    </stability>
    <license uri="http://www.opensource.org/licenses/BSD-3-Clause">BSD License (3 Clause)</license>
    <notes>
-- Fix edge case copying internal functions in runkit7_function_redefine
+- Fix edge case copying internal functions in fnbind_function_redefine
 - Avoid conflicts with other extensions that use reserved memory slots for internal function definitions.
 - Fix compilation and test errors in php 8.1
 - Allow using objects in global constants and class constants in php 8.1+ (https://wiki.php.net/rfc/new_in_initializers)
-- Make runkit_constant_redefine fail if the constant does not already exist
-- Make runkit_constant_remove/redefine fail on enum cases (support for modifying enum cases is not implemented)
+- Make fnbind_constant_redefine fail if the constant does not already exist
+- Make fnbind_constant_remove/redefine fail on enum cases (support for modifying enum cases is not implemented)
    </notes>
   </release>
   <release>
@@ -323,16 +323,16 @@ Define customized superglobal variables for general purpose use.
    </stability>
    <license uri="http://www.opensource.org/licenses/BSD-3-Clause">BSD License (3 Clause)</license>
    <notes>
-- Remove `runkit7_import()`. This had known crashes/segfaults in php 7.3+ that have not been straightforward to fix (after multiple attempts)
+- Remove `fnbind_import()`. This had known crashes/segfaults in php 7.3+ that have not been straightforward to fix (after multiple attempts)
   due to changes to PHP's internals and changes to late static binding, and offered an incomplete set of functionality.
   (e.g. could not override properties)
 
-  This was also not integrated with runkit7's tracking of manipulated methods/functions/properties.
+  This was also not integrated with fnbind's tracking of manipulated methods/functions/properties.
 - Drop support for php 7.1. Security support for php 7.1 from php-src ended in December 2019
-  and runkit7 requires a lot of work to verify that changes or new features work correctly with the internals of php in all PHP versions.
+  and fnbind requires a lot of work to verify that changes or new features work correctly with the internals of php in all PHP versions.
 - Remove disabled code, constants, and ini settings related to the sandbox feature.
-  Runkit7 has never supported sandboxes or runkit_lint due to changes to internals in php7 making it impractical.
-- Remove runkit7_object_id() - PHP 7.2 adds spl_object_id() to do the same thing.
+  Runkit7 has never supported sandboxes or fnbind_lint due to changes to internals in php7 making it impractical.
+- Remove fnbind_object_id() - PHP 7.2 adds spl_object_id() to do the same thing.
 - Fix build failure in php 8.0-dev - this extension's support for php 8 is still incomplete and experimental.
 - Add parameter default constant names to reflection (php 8 only).
    </notes>
@@ -364,20 +364,20 @@ Define customized superglobal variables for general purpose use.
    </stability>
    <license uri="http://www.opensource.org/licenses/BSD-3-Clause">BSD License (3 Clause)</license>
    <notes>
-Runkit7 3.0 finishes changing this extension's name from "runkit" to "runkit7".
+Runkit7 3.0 finishes changing this extension's name from "fnbind" to "fnbind".
 THIS WILL REQUIRE CHANGES TO YOUR BUILD SCRIPTS AND PHP.INI FILES.
 This change was made at the request of PECL admins, to comply with naming and packaging standards.
 
-- The compiled shared object name has been changed from `runkit.so` to `runkit7.so` (Mac/Linux) and `php_runkit.dll` to `php_runkit7.dll` (Windows)
-  (php.ini files should be changed to reference `extension=runkit7.so` or `extension=php_runkit7.dll`)
-- The configure flag names have been changed from flags such as `--enable-runkit` / `--enable-runkit-modify` to `--enable-runkit7` / `--enable-runkit7-modify`
-- Code using `extension_loaded('runkit')` should be changed to `extension_loaded('runkit7')` (as well as uses of ReflectionExtension, etc.)
-- The ini options `runkit.superglobal` and `runkit.internal_override` are unaffected.
+- The compiled shared object name has been changed from `fnbind.so` to `fnbind.so` (Mac/Linux) and `php_fnbind.dll` to `php_fnbind.dll` (Windows)
+  (php.ini files should be changed to reference `extension=fnbind.so` or `extension=php_fnbind.dll`)
+- The configure flag names have been changed from flags such as `--enable-fnbind` / `--enable-fnbind-modify` to `--enable-fnbind` / `--enable-fnbind-modify`
+- Code using `extension_loaded('fnbind')` should be changed to `extension_loaded('fnbind')` (as well as uses of ReflectionExtension, etc.)
+- The ini options `fnbind.superglobal` and `fnbind.internal_override` are unaffected.
 
 Changes in 3.0.0
 - Update documentation
-- Remove RUNKIT_VERSION
-- It is now possible to disable superglobal support (--disable-runkit7-super was fixed)
+- Remove FNBIND_VERSION
+- It is now possible to disable superglobal support (--disable-fnbind-super was fixed)
 - Classkit compatibility functions/constants have been removed.
    </notes>
   </release>
@@ -393,19 +393,19 @@ Changes in 3.0.0
    </stability>
    <license uri="http://www.opensource.org/licenses/BSD-3-Clause">BSD License (3 Clause)</license>
    <notes>
-Runkit7 3.0 finishes changing this extension's name from "runkit" to "runkit7".
+Runkit7 3.0 finishes changing this extension's name from "fnbind" to "fnbind".
 THIS WILL REQUIRE CHANGES TO YOUR BUILD SCRIPTS AND PHP.INI FILES.
 This change was made at the request of PECL admins, to comply with naming and packaging standards.
 
-- The compiled shared object name has been changed from `runkit.so` to `runkit7.so` (Mac/Linux) and `php_runkit.dll` to `php_runkit7.dll` (Windows)
-  (php.ini files should be changed to reference `extension=runkit7.so` or `extension=php_runkit7.dll`)
-- The configure flag names have been changed from flags such as `--enable-runkit` / `--enable-runkit-modify` to `--enable-runkit7` / `--enable-runkit7-modify`
-- Code using `extension_loaded('runkit')` should be changed to `extension_loaded('runkit7')` (as well as uses of ReflectionExtension, etc.)
-- The ini options `runkit.superglobal` and `runkit.internal_override` are unaffected.
+- The compiled shared object name has been changed from `fnbind.so` to `fnbind.so` (Mac/Linux) and `php_fnbind.dll` to `php_fnbind.dll` (Windows)
+  (php.ini files should be changed to reference `extension=fnbind.so` or `extension=php_fnbind.dll`)
+- The configure flag names have been changed from flags such as `--enable-fnbind` / `--enable-fnbind-modify` to `--enable-fnbind` / `--enable-fnbind-modify`
+- Code using `extension_loaded('fnbind')` should be changed to `extension_loaded('fnbind')` (as well as uses of ReflectionExtension, etc.)
+- The ini options `fnbind.superglobal` and `fnbind.internal_override` are unaffected.
 
 Changes in 3.0.0RC1
 - Update documentation
-- Remove RUNKIT_VERSION
+- Remove FNBIND_VERSION
    </notes>
   </release>
   <release>
@@ -420,18 +420,18 @@ Changes in 3.0.0RC1
    </stability>
    <license uri="http://www.opensource.org/licenses/BSD-3-Clause">BSD License (3 Clause)</license>
    <notes>
-Runkit7 3.0 finishes changing this extension's name from "runkit" to "runkit7".
+Runkit7 3.0 finishes changing this extension's name from "fnbind" to "fnbind".
 THIS WILL REQUIRE CHANGES TO YOUR BUILD SCRIPTS AND PHP.INI FILES.
 This change was made at the request of PECL admins, to comply with naming and packaging standards.
 
-- The compiled shared object name has been changed from `runkit.so` to `runkit7.so` (Mac/Linux) and `php_runkit.dll` to `php_runkit7.dll` (Windows)
-  (php.ini files should be changed to reference `extension=runkit7.so` or `extension=php_runkit7.dll`)
-- The configure flag names have been changed from flags such as `--enable-runkit` / `--enable-runkit-modify` to `--enable-runkit7` / `--enable-runkit7-modify`
-- Code using `extension_loaded('runkit')` should be changed to `extension_loaded('runkit7')` (as well as uses of ReflectionExtension, etc.)
-- The ini options `runkit.superglobal` and `runkit.internal_override` are unaffected.
+- The compiled shared object name has been changed from `fnbind.so` to `fnbind.so` (Mac/Linux) and `php_fnbind.dll` to `php_fnbind.dll` (Windows)
+  (php.ini files should be changed to reference `extension=fnbind.so` or `extension=php_fnbind.dll`)
+- The configure flag names have been changed from flags such as `--enable-fnbind` / `--enable-fnbind-modify` to `--enable-fnbind` / `--enable-fnbind-modify`
+- Code using `extension_loaded('fnbind')` should be changed to `extension_loaded('fnbind')` (as well as uses of ReflectionExtension, etc.)
+- The ini options `fnbind.superglobal` and `fnbind.internal_override` are unaffected.
 
 Other changes:
-- It is now possible to disable superglobal support (--disable-runkit7-super was fixed)
+- It is now possible to disable superglobal support (--disable-fnbind-super was fixed)
 - Classkit compatibility functions/constants have been removed.
    </notes>
   </release>
@@ -447,8 +447,8 @@ Other changes:
    </stability>
    <license uri="http://www.opensource.org/licenses/BSD-3-Clause">BSD License (3 Clause)</license>
    <notes>
-- Add runkit7_*() aliases for runkit_*() global functions.
-- Add RUNKIT7_* aliases for RUNKIT_* global constants.
+- Add fnbind_*() aliases for fnbind_*() global functions.
+- Add FNBIND_* aliases for FNBIND_* global constants.
    </notes>
   </release>
   <release>
@@ -463,8 +463,8 @@ Other changes:
    </stability>
    <license uri="http://www.opensource.org/licenses/BSD-3-Clause">BSD License (3 Clause)</license>
    <notes>
-- Add missing Reflection parameter information of runkit_import().
-- Remove php_runkit_sandbox.h from installed headers on Windows.
+- Add missing Reflection parameter information of fnbind_import().
+- Remove php_fnbind_sandbox.h from installed headers on Windows.
    </notes>
   </release>
   <release>
@@ -542,7 +542,7 @@ Other changes:
    </stability>
    <license uri="http://www.opensource.org/licenses/BSD-3-Clause">BSD License (3 Clause)</license>
    <notes>
-- Fix compilation when `--runkit-modify` is disabled.
+- Fix compilation when `--fnbind-modify` is disabled.
 - Fix compilation for PHP 7.3 with Windows x64.
    </notes>
   </release>
@@ -558,7 +558,7 @@ Other changes:
    </stability>
    <license uri="http://www.opensource.org/licenses/BSD-3-Clause">BSD License (3 Clause)</license>
    <notes>
-- Fix a crash caused some of the time when using runkit_function_rename to replace an original function with a different one.
+- Fix a crash caused some of the time when using fnbind_function_rename to replace an original function with a different one.
 - Fix a few compatibility issues with php 7.4.0-dev (new compatibility issues will come up in the future, and some tests fail)
    </notes>
   </release>
@@ -575,7 +575,7 @@ Other changes:
    <license uri="http://www.opensource.org/licenses/BSD-3-Clause">BSD License (3 Clause)</license>
    <notes>
 - Update documentation, fix typos in documentation and tests.
-- Fix compilation errors in PHP 7.3 betas. Note that runkit_import() has bugs in PHP 7.3.
+- Fix compilation errors in PHP 7.3 betas. Note that fnbind_import() has bugs in PHP 7.3.
    </notes>
   </release>
   <release>
@@ -590,7 +590,7 @@ Other changes:
    </stability>
    <license uri="http://www.opensource.org/licenses/BSD-3-Clause">BSD License (3 Clause)</license>
    <notes>
-- Fix crashes in `runkit_import()` seen in php 7.3 alphas.
+- Fix crashes in `fnbind_import()` seen in php 7.3 alphas.
    </notes>
   </release>
   <release>
@@ -605,7 +605,7 @@ Other changes:
    </stability>
    <license uri="http://www.opensource.org/licenses/BSD-3-Clause">BSD License (3 Clause)</license>
    <notes>
-- Fix crashes seen in php 7.3 alphas when function and method manipulation is used. (https://github.com/runkit7/runkit7/issues/126, https://github.com/runkit7/runkit7/issues/141)
+- Fix crashes seen in php 7.3 alphas when function and method manipulation is used. (https://github.com/fnbind/fnbind/issues/126, https://github.com/fnbind/fnbind/issues/141)
    </notes>
   </release>
   <release>
@@ -620,7 +620,7 @@ Other changes:
    </stability>
    <license uri="http://www.opensource.org/licenses/BSD-3-Clause">BSD License (3 Clause)</license>
    <notes>
-- Fix incorrect reference counting of class names in parameter and return type signatures for `runkit_function_*()` and `runkit_method_*()` (https://github.com/runkit7/runkit7/issues/123).
+- Fix incorrect reference counting of class names in parameter and return type signatures for `fnbind_function_*()` and `fnbind_method_*()` (https://github.com/fnbind/fnbind/issues/123).
   This bug only affected php 7.2.0+
    </notes>
   </release>
@@ -639,7 +639,7 @@ Other changes:
 - Fix compilation errors in newer php versions.
 - PHP 7.2+ continues to have some severe bugs for function/method manipulation
 - Fix some unit tests
-- runkit_lint and runkit_import continue to be broken (This release contains some work on trying to fix the compilation errors)
+- fnbind_lint and fnbind_import continue to be broken (This release contains some work on trying to fix the compilation errors)
 - Update CI test scripts
 - Improve documentation
    </notes>
@@ -688,9 +688,9 @@ Other changes:
    <license uri="http://www.opensource.org/licenses/BSD-3-Clause">BSD License (3 Clause)</license>
    <notes>
    Bug Fixes
-     + Fix bugs in reference counting variable names of runkit superglobals.
+     + Fix bugs in reference counting variable names of fnbind superglobals.
 	   The bug may have caused crashes or erroneous undefined variable notices.
-	   Only affects users if the `runkit.superglobal` ini setting is non-empty.
+	   Only affects users if the `fnbind.superglobal` ini setting is non-empty.
 	   Mainly affects NTS builds.
    </notes>
   </release>
@@ -707,8 +707,8 @@ Other changes:
    <license uri="http://www.opensource.org/licenses/BSD-3-Clause">BSD License (3 Clause)</license>
    <notes>
    New Features
-     + Allow preserving and manipulating visibility of class constants with runkit constant manipulation functions.
-     + Update Reflection argument info for runkit functions
+     + Allow preserving and manipulating visibility of class constants with fnbind constant manipulation functions.
+     + Update Reflection argument info for fnbind functions
    </notes>
   </release>
   <release>
@@ -724,7 +724,7 @@ Other changes:
    <license uri="http://www.opensource.org/licenses/BSD-3-Clause">BSD License (3 Clause)</license>
    <notes>
    Fixes
-     + Fixes invalid error message when printing an error message, in the case when syntactically invalid code strings for runkit_function_add, etc.
+     + Fixes invalid error message when printing an error message, in the case when syntactically invalid code strings for fnbind_function_add, etc.
      + Fixes a crash on shutdown when overriding internal methods
      + Update documentation
    </notes>
@@ -745,18 +745,18 @@ Other changes:
          + Supports PHP 7.0 and PHP 7.1, tested on 64-bit and 32-bit builds (ZTS and non-ZTS)
          - Removed support for PHP &lt;= 5.x
          + Superglobals work reliably in php7.0 and 7.1
-         + runkit_method_* and runkit_function_* have been ported. Manipulating built in functions (e.g. `var_dump` with `runkit.internal_override`) may cause segfaults or memory leaks.
+         + fnbind_method_* and fnbind_function_* have been ported. Manipulating built in functions (e.g. `var_dump` with `fnbind.internal_override`) may cause segfaults or memory leaks.
          + Constant manipulation works, if the constant is declared in a different file from the file doing the accessing. Constants declared within the same file may be inlined by the PHP Zend VM.
-         + See runkit-api.php for the supported APIs.
-         + Allows using static::/self::/$this in runkit_method_add/redefine.
+         + See fnbind-api.php for the supported APIs.
+         + Allows using static::/self::/$this in fnbind_method_add/redefine.
 
      New features
-         + Allow specifying the return type for runkit function and method manipulation. Supports optional return types in 7.1 (e.g. '?string')
+         + Allow specifying the return type for fnbind function and method manipulation. Supports optional return types in 7.1 (e.g. '?string')
 
      Disabled features
-         + runkit_default_property_* was disabled because of changes to the PHP Zend VM. Future releases may introduce `runkit_default_property_redefine`.
-         + runkit sandbox and `runkit_lint*` were removed.
-         + `runkit_class_emancipate` and `runkit_class_adopt` are disabled, because they depend on default property manipulation.
+         + fnbind_default_property_* was disabled because of changes to the PHP Zend VM. Future releases may introduce `fnbind_default_property_redefine`.
+         + fnbind sandbox and `fnbind_lint*` were removed.
+         + `fnbind_class_emancipate` and `fnbind_class_adopt` are disabled, because they depend on default property manipulation.
    </notes>
   </release>
   <release>
@@ -774,26 +774,26 @@ Other changes:
      New features:
          + PHP 5.4, 5.5, and 5.6 are now fully supported
          - PHP 4.x is not supported anymore
-         + Closures are now accepted by runkit_function_add, runkit_function_redefine, runkit_method_add, and runkit_method_redefine
+         + Closures are now accepted by fnbind_function_add, fnbind_function_redefine, fnbind_method_add, and fnbind_method_redefine
            This feature works in PHP 5.3 and above.
-         + Introduced new function "runkit_default_property_remove" (Thanks to Juhan Kundla)
+         + Introduced new function "fnbind_default_property_remove" (Thanks to Juhan Kundla)
          + Ability to add non-scalar default properties was added
          + Magic methods __isset, __unset, __callStatic, serialize, unserialize, debugInfo and __toString are now supported.
-         + Functions runkit_class_adopt &amp; runkit_class_emancipate now change class-hierarchy (issue #13)
+         + Functions fnbind_class_adopt &amp; fnbind_class_emancipate now change class-hierarchy (issue #13)
          + Adding and redefining functions and methods, which return references, were fully implemented
-           New optional argument 'return_ref' of functions runkit_function_add and runkit_function_redefine was introduced
-           New constant RUNKIT_ACC_RETURN_REFERENCE was introduced for use with functions runkit_method_add and runkit_method_redefine
+           New optional argument 'return_ref' of functions fnbind_function_add and fnbind_function_redefine was introduced
+           New constant FNBIND_ACC_RETURN_REFERENCE was introduced for use with functions fnbind_method_add and fnbind_method_redefine
          + Properties adding, removing, and importing were reworked for proper inheritance (including objects in PHP5+)
-         + A new constant RUNKIT_OVERRIDE_OBJECTS was introduced. Use it by bitwise adding to the flags parameter
-           of functions runkit_default_property_add and runkit_import to add (and remove) properties of existing objects.
+         + A new constant FNBIND_OVERRIDE_OBJECTS was introduced. Use it by bitwise adding to the flags parameter
+           of functions fnbind_default_property_add and fnbind_import to add (and remove) properties of existing objects.
            This feature works in PHP 5.x and above and it is switched off by default.
          + New (the third one) parameter remove_from_objects of boolean type was introduced
-           in runkit_default_property_remove function. Pass the TRUE value to remove property from existing objects.
+           in fnbind_default_property_remove function. Pass the TRUE value to remove property from existing objects.
            This feature works in PHP 5.x and above. The default value for this parameter is FALSE.
          + Namespaces are fully supported by constants manipulation functions (Thanks to Antony Dovgal)
          + Allow disabling of allow_url_include in a Runkit_Sandbox (PHP >= 5.2) (Thanks to Sara Golemon)
-         + New optional argument 'doc_comment' of functions runkit_method_add, runkit_method_redefine, runkit_function_add,
-           and runkit_function_redefine was introduced to specify doc_comments.
+         + New optional argument 'doc_comment' of functions fnbind_method_add, fnbind_method_redefine, fnbind_function_add,
+           and fnbind_function_redefine was introduced to specify doc_comments.
          + Preserve doc_comments on copying and redefining functions and methods.
 
      Critical fixes:
@@ -801,9 +801,9 @@ Other changes:
            for which those Reflection objects have been instantiated, were eliminated
          * Crash on sandbox creation when register_globals is switched on was fixed
          * Building and working with PHP4 were fixed
-         * Crash on syntax error in source file importing with runkit_import was fixed
+         * Crash on syntax error in source file importing with fnbind_import was fixed
          * The possible crash on manipulating constants having length less than two characters was eliminated
-         * Crash after using runkit_class_adopt when inherited methods access properties of the parent class (issue #59)
+         * Crash after using fnbind_class_adopt when inherited methods access properties of the parent class (issue #59)
          * Crash on calling renamed private/protected method (issue #64)
          * Crash when copied function contains finally (issue #77) (Thanks to Antony Dovgal)
          * Lists of directories in open_basedir sandbox setting are now supported
@@ -816,10 +816,10 @@ Other changes:
          * Skip the leading slash in class names
          * Copying, redefining, and renaming of functions were reworked
          * Converting of input parameters (class names &amp; function names) to lowercase was eliminated
-         * runkit_method_redefine function now sets the 'prototype' field for the method
+         * fnbind_method_redefine function now sets the 'prototype' field for the method
            and its descendants (Thanks to Anthony Dovgal)
          * Freeing already freed memory on importing of a non-existent file was eliminated
-         * A test for correctness of runkit.superglobals feature was added
+         * A test for correctness of fnbind.superglobals feature was added
          * Tests for correctness of inheritance of properties were added
          * Tests for correctness of adding static properties were added
          * Bug 57649 (https://bugs.php.net/bug.php?id=57649) has been fixed without apathy ;)
@@ -829,7 +829,7 @@ Other changes:
            (thanks to Sara Golemon for code and to https://github.com/cobrafast for test)
          * Restoring of misplaced internal functions was corrected (issue #63)
          * Delete temporary function on errors of adding/redefining methods
-         * runkit_method_add, runkit_method_copy, and runkit_method_rename now override derived methods (issue #62)
+         * fnbind_method_add, fnbind_method_copy, and fnbind_method_rename now override derived methods (issue #62)
 
      Build system improvements:
          * PEAR Channel zenovich.github.io/pear was introduced for releasing new packages
@@ -855,7 +855,7 @@ Other changes:
      License was changed to the BSD License (3 Clause)
      Main bug-fixes:
          * Building on windows-platform was fixed.
-         * The issue with inheritance of methods, which have been created by the runkit_method_rename function, was fixed.
+         * The issue with inheritance of methods, which have been created by the fnbind_method_rename function, was fixed.
          * Fixed dumb bug in workarounds based on php-version.</notes>
   </release>
 
@@ -887,26 +887,26 @@ Other changes:
    <notes>
      New features:
          + The patch made by David Sklar was applied to support creation and changing of static methods.
-           The new user-level const &quot;RUNKIT_ACC_STATIC&quot; was introduced.
+           The new user-level const &quot;FNBIND_ACC_STATIC&quot; was introduced.
          + An ability to import static class properties was added.
-           The new user-level const &quot;RUNKIT_IMPORT_CLASS_STATIC_PROPS&quot; was introduced.
+           The new user-level const &quot;FNBIND_IMPORT_CLASS_STATIC_PROPS&quot; was introduced.
          + An ability to apply a closure to a sandbox in PHP 5.3+ by calling the call_user_func method was added.
 
      Main bug-fixes:
          * Fixes of issues with importing constant arrays into properties and constants
          * Fixes of issues with importing functions or methods having static variables inside them
          * The behaviour that old methods had been always overridden by new ones independently from
-           the RUNKIT_IMPORT_OVERRIDE flag was corrected
+           the FNBIND_IMPORT_OVERRIDE flag was corrected
          * Compatibility with 5.3+ in zts mode
-         * runkit_function_* functions were fixed with the patch from Keisial at gmail dot com
+         * fnbind_function_* functions were fixed with the patch from Keisial at gmail dot com
            (see the second comment from http://pecl.php.net/bugs/bug.php?id=14086)
-         * The reverting of protected methods via runkit_method_copy was corrected, the segmentation fault
+         * The reverting of protected methods via fnbind_method_copy was corrected, the segmentation fault
            on calling restored method was eliminated
          * Elimination of the segmentation-fault on exit after restoring modified internal functions
            (see also http://pecl.php.net/bugs/bug.php?id=11632)
          * Correction for the situation when a method or function having static variables in itself
-           and copied by runkit crashes afterwards on calling if the original method or function was removed
-         * The issue that the runkit used to create new methods with lowercase names was fixed, tests were extended
+           and copied by fnbind crashes afterwards on calling if the original method or function was removed
+         * The issue that the fnbind used to create new methods with lowercase names was fixed, tests were extended
          * Methods&apos; prototype detection was fixed</notes>
   </release>
 
@@ -926,7 +926,7 @@ Other changes:
     philip:    Fixed test
     bjori:     Fixed PHP bug#46847 (phpinfo() is missing some settings.)
     felipe:    'static' was added into ZEND_BEGIN_ARG_INFO_EX macro
-    mlively:   Rework of runkit_import to allow the fixing of 4519.
+    mlively:   Rework of fnbind_import to allow the fixing of 4519.
     sfox:      Bring the majority of PECL extensions into line with macro/x.x.x versioning.
     sebastian: Fix #10053: memory exhausted, patch by Stefan Marr.
                Fix #10300: Segfault when copying __call(), patch by Stefan Marr.
@@ -947,25 +947,25 @@ Other changes:
     <api>beta</api>
    </stability>
    <license uri="http://www.php.net/license">PHP</license>
-   <notes>Allow building part of runkit while leaving other functionality out.
---enable-runkit works as before, building all runkit features
+   <notes>Allow building part of fnbind while leaving other functionality out.
+--enable-fnbind works as before, building all fnbind features
 Individual features may enabled or disable by using
---enable-runkit-featurename or --disable-runkit-featurename
+--enable-fnbind-featurename or --disable-fnbind-featurename
 where featurename is any of:
     modify  - Runtime manipulation
     super   - Superglobal registration
     sandbox - Sandboxing
 
-Ex: ./configure --enable-runkit --disable-runkit-modify
+Ex: ./configure --enable-fnbind --disable-fnbind-modify
         Enable superglobal registration and sandbox support,
         but disable runtime manipulation.
 
-    ./configure --disable-runkit --enable-runkit-sandbox
+    ./configure --disable-fnbind --enable-fnbind-sandbox
         Enable only sandboxing support.
 
 This release also:
 - Fixes PHP4 (ZE1) compilation
-- Closes a potential crash-bug in runkit_import()
+- Closes a potential crash-bug in fnbind_import()
   handling of default properties
 - Resolves an output buffering bug in Runkit_Sandbox
 - Resolves Runkit_Sandbox failure when superglobals are defined</notes>
@@ -982,7 +982,7 @@ This release also:
     <api>beta</api>
    </stability>
    <license uri="http://www.php.net/license">PHP</license>
-   <notes>Added source file runkit_props.c to package</notes>
+   <notes>Added source file fnbind_props.c to package</notes>
   </release>
 
   <release>
@@ -999,10 +999,10 @@ This release also:
    <notes>Fixed SAPI handlers for genuinely threaded webservers (e.g. apache2-worker)
 Fixed internal pointer corruption in function/class popping
 Added functions:
-  runkit_zval_inspect()
-  runkit_return_value_used()
-  runkit_default_property_add()
-Implemented class property importing in runkit_import()
+  fnbind_zval_inspect()
+  fnbind_return_value_used()
+  fnbind_default_property_add()
+Implemented class property importing in fnbind_import()
 Began refactor for PHP6 compatibility
    </notes>
   </release>
@@ -1020,8 +1020,8 @@ Began refactor for PHP6 compatibility
    <license uri="http://www.php.net/license">PHP</license>
    <notes>Primarily bugfix release, only new functionality is expanded parent_scope setting.
 
-Workaround bug when using runkit_import() with opcode caches by bypassing cache for imported file.
-Fix using runkit_import() with multiple classes (Thanks to Stuart Herbert for the patch)
+Workaround bug when using fnbind_import() with opcode caches by bypassing cache for imported file.
+Fix using fnbind_import() with multiple classes (Thanks to Stuart Herbert for the patch)
 Fix various reference issues for parameters passed to manipulation functions.
 Fix C++ compatibility in sandbox source files.
 Fix parent_scope support (was only applied to property_read and eval/include/require ops)
@@ -1041,7 +1041,7 @@ Expand parent_scope setting to allow variable arrays as symbol tables.
    <date>2005-09-30</date>
    <license uri="http://www.php.net/license">PHP</license>
    <notes>Add ability to modify/rename/remove internal functions.
-Requires PHP_INI_SYSTEM setting runkit.internal_override to be enabled.
+Requires PHP_INI_SYSTEM setting fnbind.internal_override to be enabled.
 
 Implement Runkit_Sandbox_Parent to give child access to parent&apos;s scope
 Parent must enable $sandbox[&apos;parent_access&apos;] at minimum.
@@ -1076,9 +1076,9 @@ as seen from the child according to:
    </stability>
    <date>2005-09-23</date>
    <license uri="http://www.php.net/license">PHP</license>
-   <notes>NOTICE: This release demotes runkit_sandbox_output_handler() to DEPRECATED.
+   <notes>NOTICE: This release demotes fnbind_sandbox_output_handler() to DEPRECATED.
 Use $sandbox[&apos;output_handler&apos;] = $handler; rather than
-runkit_sandbox_output_handler($sandbox, $handler);
+fnbind_sandbox_output_handler($sandbox, $handler);
 The procedural version will be removed prior to a 1.0-stable release.
 Other changes include:
 - Major refactor of Runkit_Sandbox OOP Model.
@@ -1098,12 +1098,12 @@ Other changes include:
    </stability>
    <date>2005-07-08</date>
    <license uri="http://www.php.net/license">PHP</license>
-   <notes>Added runkit_object_id() -- Fetch object handle identifier
-Fixed runkit_import() -- Fold case when adding method keys to ce-&gt;function_table
-Fixed runkit_method_*() to properly return TRUE on success
+   <notes>Added fnbind_object_id() -- Fetch object handle identifier
+Fixed fnbind_import() -- Fold case when adding method keys to ce-&gt;function_table
+Fixed fnbind_method_*() to properly return TRUE on success
 Refactored INI overrides in Runkit_Sandbox for readability
 Added INI overrides in Runkit_Sandbox (safe_mode_gid,safe_mode_include_dir)
-Fixed callback parameter to runkit_sandbox_output_handler() to be optional.
+Fixed callback parameter to fnbind_sandbox_output_handler() to be optional.
    </notes>
   </release>
 
@@ -1118,9 +1118,9 @@ Fixed callback parameter to runkit_sandbox_output_handler() to be optional.
    </stability>
    <date>2005-06-03</date>
    <license uri="http://www.php.net/license">PHP</license>
-   <notes>Put php_runkit.h back into the package.xml file. (pear install runkit-beta should work now).
+   <notes>Put php_fnbind.h back into the package.xml file. (pear install fnbind-beta should work now).
 Implement die(), exit(), echo(), and print() and catch bailouts properly.
-Implement output capturing -- runkit_sandbox_output_handler().
+Implement output capturing -- fnbind_sandbox_output_handler().
    </notes>
   </release>
 
@@ -1138,8 +1138,8 @@ Implement output capturing -- runkit_sandbox_output_handler().
    <notes>Numerous build fixes in older versions and Win32.
 Fix registration of more than one superglobal.
 Implement include(), require(), include_once(), require_once(), unset(), isset(), and empty() support in Runkit_Sandbox.
-Add runkit.superglobal as &quot;special&quot; ini supported by Runkit_Sandbox.
-Fix runkit_class_*.phpt regression tests to be version agnostic.
+Add fnbind.superglobal as &quot;special&quot; ini supported by Runkit_Sandbox.
+Fix fnbind_class_*.phpt regression tests to be version agnostic.
    </notes>
   </release>
 

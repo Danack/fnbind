@@ -14,10 +14,10 @@ ARCHITECTURE=${2:-}
 
 if [[ "$ARCHITECTURE" == i386 ]]; then
 	PHP_IMAGE="$ARCHITECTURE/php"
-	DOCKER_IMAGE="runkit7-test-runner:$ARCHITECTURE-$PHP_VERSION"
+	DOCKER_IMAGE="fnbind-test-runner:$ARCHITECTURE-$PHP_VERSION"
 else
 	PHP_IMAGE="php"
-	DOCKER_IMAGE="runkit7-test-runner:$PHP_VERSION"
+	DOCKER_IMAGE="fnbind-test-runner:$PHP_VERSION"
 fi
 
 docker build --build-arg="PHP_VERSION=$PHP_VERSION" --build-arg="PHP_IMAGE=$PHP_IMAGE" --tag="$DOCKER_IMAGE" -f ci/Dockerfile .

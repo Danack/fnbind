@@ -1,4 +1,4 @@
-Many parts of the "runkit7" code were based on functions from the Zend engine.
+Many parts of the "fnbind" code were based on functions from the Zend engine.
 The code they are based on was subject to the Zend license, included below.
 
 -------------------------------------------------------------------- 

@@ -10,6 +10,6 @@ ADD *.sh *.c *.h *.php *.md config.m4 config.w32 package.xml LICENSE* Makefile.f
 # Assume compilation will be the time consuming step.
 # Add tests after compiling so that it's faster to update tests and re-run them locally.
 RUN phpize && ./configure && make -j2 && make install
-RUN docker-php-ext-enable runkit7
+RUN docker-php-ext-enable fnbind
 ADD tests ./tests
 ADD ci ./ci
