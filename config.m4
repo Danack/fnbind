@@ -41,12 +41,9 @@ if test "$PHP_RUNKIT7" != "no"; then
   if test "$PHP_RUNKIT7_SUPER" != "no"; then
     AC_DEFINE(PHP_RUNKIT7_FEATURE_SUPER, 1, [Whether to export custom autoglobal registration feature])
   fi
-  PHP_NEW_EXTENSION(runkit7, runkit.c runkit_functions.c runkit_methods.c \
-runkit_constants.c \
+  PHP_NEW_EXTENSION(runkit7, runkit.c runkit_functions.c \
 runkit_common.c \
 runkit_zend_execute_API.c \
-runkit_classes.c \
-runkit_props.c \
 , $ext_shared,, -Werror -Wall -Wno-deprecated-declarations -Wno-pedantic)
 dnl use Makefile.frag to echo notice about upgrading to runkit7 3.x
   PHP_ADD_MAKEFILE_FRAGMENT
