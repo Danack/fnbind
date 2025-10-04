@@ -45,16 +45,10 @@ ZEND_DECLARE_MODULE_GLOBALS(fnbind)
 PHP_FUNCTION(fnbind_function_add);
 
 
-
 /* {{{ fnbind_functions[]
  */
 zend_function_entry fnbind_functions[] = {
-
-
-
 	PHP_FE_AND_FALIAS(fnbind_function_add,			unused_function_add)
-
-
 	{NULL, NULL, NULL}
 };
 /* }}} */
@@ -211,9 +205,7 @@ PHP_MINFO_FUNCTION(fnbind)
 	php_info_print_table_start();
 	php_info_print_table_header(2, "fnbind support", "enabled");
 	php_info_print_table_header(2, "version", PHP_FNBIND_VERSION);
-
 	php_info_print_table_end();
-
 	DISPLAY_INI_ENTRIES();
 }
 /* }}} */
