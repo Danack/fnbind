@@ -83,79 +83,79 @@ int php_fnbind_check_call_stack(zend_op_array *op_array)
 #define PHP_FNBIND_FETCH_FUNCTION_REMOVE	1
 #define PHP_FNBIND_FETCH_FUNCTION_RENAME	2
 
-/* {{{ php_fnbind_fetch_function
- */
-static zend_function *php_fnbind_fetch_function(zend_string *fname, int flag)
-{
-	zend_function *fe;
-	zend_string *fname_lower;
-
-	fname_lower = zend_string_tolower(fname);
-
-	if ((fe = zend_hash_find_ptr(EG(function_table), fname_lower)) == NULL) {
-		zend_string_release(fname_lower);
-		php_error_docref(NULL, E_WARNING, "%s() not found", ZSTR_VAL(fname));
-		return NULL;
-	}
-
-	if (fe->type == ZEND_INTERNAL_FUNCTION &&
-		!FNBIND_G(internal_override)) {
-		zend_string_release(fname_lower);
-		php_error_docref(NULL, E_WARNING, "%s() is an internal function and fnbind.internal_override is disabled", ZSTR_VAL(fname));
-		return NULL;
-	}
-
-	if (fe->type != ZEND_USER_FUNCTION &&
-		fe->type != ZEND_INTERNAL_FUNCTION) {
-		zend_string_release(fname_lower);
-		php_error_docref(NULL, E_WARNING, "%s() is not a user or normal internal function", ZSTR_VAL(fname));
-		return NULL;
-	}
-
-	if (fe->type == ZEND_INTERNAL_FUNCTION &&
-		flag >= PHP_FNBIND_FETCH_FUNCTION_REMOVE) {
-
-		if (!FNBIND_G(replaced_internal_functions)) {
-			ALLOC_HASHTABLE(FNBIND_G(replaced_internal_functions));
-			zend_hash_init(FNBIND_G(replaced_internal_functions), 4, NULL, NULL, 0);
-		}
-		// FIXME figure out what this is intended to do (Restoring internal functions on request shutdown)
-		// This is also used to check if a function with a given name was originally internal.
-		// Cloning this - It would otherwise be deleted with fnbind_function_redefine called later... (TODO: Add 1 to the refcount?)
-		// TODO: Properly specify the behavior to avoid memory leaks
-		if (!zend_hash_exists(FNBIND_G(replaced_internal_functions), fname_lower)) {
-			Bucket *b;
-			zend_function *fe_copy;
-			// Copy over the original function - If the original function remains, it will be freed on module shutdown.
-			zend_string_addref(fe->common.function_name);  // possibly unnecessary
-			fe_copy = php_fnbind_function_clone(fe, fe->common.function_name, ZEND_INTERNAL_FUNCTION);
-			// Copy over the original persistent string - That string wouldn't be destroyed on request shutdown in fpm, and can be reused in future requests?
-			b = php_fnbind_zend_hash_find_bucket(EG(function_table), fname_lower);
-			// php_error_docref(NULL, E_WARNING, "Finding persistent string %s: %llx\n", ZSTR_VAL(fname_lower), (long long)(uintptr_t)b);
-			// It's a persistent string, not an interned string? Is it always a persistent string (E.g. in NTS, ZTS, maintainer ZTS)?
-			if (b->key != NULL) {
-				zend_string_addref(b->key);
-				zend_string_release(fname_lower);
-				fname_lower = b->key;
-				// php_error_docref(NULL, E_WARNING, "Stealing persistent string %s\n", ZSTR_VAL(fname_lower));
-			} else {
-				zend_string_addref(fname_lower);
-			}
-			zend_hash_add_ptr(FNBIND_G(replaced_internal_functions), fname_lower, fe_copy);
-		}
-		// printf("Adding fe %llx to replaced_internal_functions key=%s result=%llx\n", (long long)fe, ZSTR_VAL(fname_lower), (long long)result);
-		/*
-		 * If internal functions have been modified then fnbind's request shutdown handler
-		 * should be called after all other modules' ones.
-		 */
-		php_fnbind_hash_move_fnbind_to_front();
-		EG(full_tables_cleanup) = 1; // dirty hack!
-	}
-	zend_string_release(fname_lower);
-
-	return fe;
-}
-/* }}} */
+///* {{{ php_fnbind_fetch_function
+// */
+//static zend_function *php_fnbind_fetch_function(zend_string *fname, int flag)
+//{
+//	zend_function *fe;
+//	zend_string *fname_lower;
+//
+//	fname_lower = zend_string_tolower(fname);
+//
+//	if ((fe = zend_hash_find_ptr(EG(function_table), fname_lower)) == NULL) {
+//		zend_string_release(fname_lower);
+//		php_error_docref(NULL, E_WARNING, "%s() not found", ZSTR_VAL(fname));
+//		return NULL;
+//	}
+//
+//	if (fe->type == ZEND_INTERNAL_FUNCTION &&
+//		!FNBIND_G(internal_override)) {
+//		zend_string_release(fname_lower);
+//		php_error_docref(NULL, E_WARNING, "%s() is an internal function and fnbind.internal_override is disabled", ZSTR_VAL(fname));
+//		return NULL;
+//	}
+//
+//	if (fe->type != ZEND_USER_FUNCTION &&
+//		fe->type != ZEND_INTERNAL_FUNCTION) {
+//		zend_string_release(fname_lower);
+//		php_error_docref(NULL, E_WARNING, "%s() is not a user or normal internal function", ZSTR_VAL(fname));
+//		return NULL;
+//	}
+//
+//	if (fe->type == ZEND_INTERNAL_FUNCTION &&
+//		flag >= PHP_FNBIND_FETCH_FUNCTION_REMOVE) {
+//
+//		if (!FNBIND_G(replaced_internal_functions)) {
+//			ALLOC_HASHTABLE(FNBIND_G(replaced_internal_functions));
+//			zend_hash_init(FNBIND_G(replaced_internal_functions), 4, NULL, NULL, 0);
+//		}
+//		// FIXME figure out what this is intended to do (Restoring internal functions on request shutdown)
+//		// This is also used to check if a function with a given name was originally internal.
+//		// Cloning this - It would otherwise be deleted with fnbind_function_redefine called later... (TODO: Add 1 to the refcount?)
+//		// TODO: Properly specify the behavior to avoid memory leaks
+//		if (!zend_hash_exists(FNBIND_G(replaced_internal_functions), fname_lower)) {
+//			Bucket *b;
+//			zend_function *fe_copy;
+//			// Copy over the original function - If the original function remains, it will be freed on module shutdown.
+//			zend_string_addref(fe->common.function_name);  // possibly unnecessary
+//			fe_copy = php_fnbind_function_clone(fe, fe->common.function_name, ZEND_INTERNAL_FUNCTION);
+//			// Copy over the original persistent string - That string wouldn't be destroyed on request shutdown in fpm, and can be reused in future requests?
+//			b = php_fnbind_zend_hash_find_bucket(EG(function_table), fname_lower);
+//			// php_error_docref(NULL, E_WARNING, "Finding persistent string %s: %llx\n", ZSTR_VAL(fname_lower), (long long)(uintptr_t)b);
+//			// It's a persistent string, not an interned string? Is it always a persistent string (E.g. in NTS, ZTS, maintainer ZTS)?
+//			if (b->key != NULL) {
+//				zend_string_addref(b->key);
+//				zend_string_release(fname_lower);
+//				fname_lower = b->key;
+//				// php_error_docref(NULL, E_WARNING, "Stealing persistent string %s\n", ZSTR_VAL(fname_lower));
+//			} else {
+//				zend_string_addref(fname_lower);
+//			}
+//			zend_hash_add_ptr(FNBIND_G(replaced_internal_functions), fname_lower, fe_copy);
+//		}
+//		// printf("Adding fe %llx to replaced_internal_functions key=%s result=%llx\n", (long long)fe, ZSTR_VAL(fname_lower), (long long)result);
+//		/*
+//		 * If internal functions have been modified then fnbind's request shutdown handler
+//		 * should be called after all other modules' ones.
+//		 */
+//		php_fnbind_hash_move_fnbind_to_front();
+//		EG(full_tables_cleanup) = 1; // dirty hack!
+//	}
+//	zend_string_release(fname_lower);
+//
+//	return fe;
+//}
+///* }}} */
 
 /* {{{ php_fnbind_ensure_misplaced_internal_functions_table_exists */
 static inline void php_fnbind_ensure_misplaced_internal_functions_table_exists()
@@ -184,16 +184,16 @@ static inline void php_fnbind_add_to_misplaced_internal_functions(zend_function 
 }
 /* }}} */
 
-/* {{{ php_fnbind_destroy_misplaced_internal_function */
-static inline void php_fnbind_destroy_misplaced_internal_function(zend_function *fe, zend_string *fname_lower)
-{
-	if (fe->type == ZEND_INTERNAL_FUNCTION && FNBIND_G(misplaced_internal_functions) &&
-	    zend_hash_exists(FNBIND_G(misplaced_internal_functions), fname_lower)) {
-		// PHP_FNBIND_FREE_INTERNAL_FUNCTION_NAME would have been called, but function destructor already deletes those?
-		zend_hash_del(FNBIND_G(misplaced_internal_functions), fname_lower);
-	}
-}
-/* }}} */
+///* {{{ php_fnbind_destroy_misplaced_internal_function */
+//static inline void php_fnbind_destroy_misplaced_internal_function(zend_function *fe, zend_string *fname_lower)
+//{
+//	if (fe->type == ZEND_INTERNAL_FUNCTION && FNBIND_G(misplaced_internal_functions) &&
+//	    zend_hash_exists(FNBIND_G(misplaced_internal_functions), fname_lower)) {
+//		// PHP_FNBIND_FREE_INTERNAL_FUNCTION_NAME would have been called, but function destructor already deletes those?
+//		zend_hash_del(FNBIND_G(misplaced_internal_functions), fname_lower);
+//	}
+//}
+///* }}} */
 
 #ifdef RT_CONSTANT_EX
 /* {{{ php_fnbind_set_opcode_constant
@@ -777,62 +777,62 @@ static inline void *fnbind_zend_hash_add_or_update_function_table_ptr(HashTable 
 }
 /* }}} */
 
-/* {{{ php_fnbind_clear_function_runtime_cache */
-static void php_fnbind_clear_function_runtime_cache(zend_function *f)
-{
-	zend_op_array *op_array;
-	if (f->type != ZEND_USER_FUNCTION) {
-		return;
-	}
-	op_array = &(f->op_array);
-	if (op_array->cache_size == 0 || FNBIND_RUN_TIME_CACHE(op_array) == NULL) {
-		return;
-	}
+///* {{{ php_fnbind_clear_function_runtime_cache */
+//static void php_fnbind_clear_function_runtime_cache(zend_function *f)
+//{
+//	zend_op_array *op_array;
+//	if (f->type != ZEND_USER_FUNCTION) {
+//		return;
+//	}
+//	op_array = &(f->op_array);
+//	if (op_array->cache_size == 0 || FNBIND_RUN_TIME_CACHE(op_array) == NULL) {
+//		return;
+//	}
+//
+//	// TODO: Does memset do what I want it to do?
+//	memset(FNBIND_RUN_TIME_CACHE(op_array), 0, op_array->cache_size);
+//}
+///* }}} */
 
-	// TODO: Does memset do what I want it to do?
-	memset(FNBIND_RUN_TIME_CACHE(op_array), 0, op_array->cache_size);
-}
-/* }}} */
+///* {{{ php_fnbind_clear_function_runtime_cache_for_function_table */
+//static void php_fnbind_clear_function_runtime_cache_for_function_table(HashTable *function_table) {
+//	zend_function* f;
+//	ZEND_HASH_FOREACH_PTR(function_table, f) {
+//		php_fnbind_clear_function_runtime_cache(f);
+//	} ZEND_HASH_FOREACH_END();
+//}
+///* }}} */
 
-/* {{{ php_fnbind_clear_function_runtime_cache_for_function_table */
-static void php_fnbind_clear_function_runtime_cache_for_function_table(HashTable *function_table) {
-	zend_function* f;
-	ZEND_HASH_FOREACH_PTR(function_table, f) {
-		php_fnbind_clear_function_runtime_cache(f);
-	} ZEND_HASH_FOREACH_END();
-}
-/* }}} */
-
-/* {{{ php_fnbind_clear_all_functions_runtime_cache */
-void php_fnbind_clear_all_functions_runtime_cache()
-{
-	uint32_t i;
-	zend_execute_data *ptr;
-	zend_class_entry *ce;
-
-	php_fnbind_clear_function_runtime_cache_for_function_table(EG(function_table));
-
-	ZEND_HASH_FOREACH_PTR(EG(class_table), ce) {
-		php_fnbind_clear_function_runtime_cache_for_function_table(&(ce->function_table));
-	} ZEND_HASH_FOREACH_END();
-
-	// TODO: Does this make sense, does it work with a runtime cache?
-	for (ptr = EG(current_execute_data); ptr != NULL; ptr = ptr->prev_execute_data) {
-		// TODO: I assume that ptr->run_time_cache is the same pointer, if set?
-		if (ptr->func == NULL || ptr->func->type == ZEND_INTERNAL_FUNCTION || ptr->func->op_array.cache_size == 0 || FNBIND_RUN_TIME_CACHE(&(ptr->func->op_array)) == NULL) {
-			continue;
-		}
-		memset(FNBIND_RUN_TIME_CACHE(&(ptr->func->op_array)), 0, ptr->func->op_array.cache_size);
-	}
-
-	PHP_FNBIND_ITERATE_THROUGH_OBJECTS_STORE_BEGIN(i)
-		if (object->ce == zend_ce_closure) {
-		zend_closure *cl = (zend_closure *)object;
-			php_fnbind_clear_function_runtime_cache(&cl->func);
-		}
-	PHP_FNBIND_ITERATE_THROUGH_OBJECTS_STORE_END
-}
-/* }}} */
+///* {{{ php_fnbind_clear_all_functions_runtime_cache */
+//void php_fnbind_clear_all_functions_runtime_cache()
+//{
+//	uint32_t i;
+//	zend_execute_data *ptr;
+//	zend_class_entry *ce;
+//
+//	php_fnbind_clear_function_runtime_cache_for_function_table(EG(function_table));
+//
+//	ZEND_HASH_FOREACH_PTR(EG(class_table), ce) {
+//		php_fnbind_clear_function_runtime_cache_for_function_table(&(ce->function_table));
+//	} ZEND_HASH_FOREACH_END();
+//
+//	// TODO: Does this make sense, does it work with a runtime cache?
+//	for (ptr = EG(current_execute_data); ptr != NULL; ptr = ptr->prev_execute_data) {
+//		// TODO: I assume that ptr->run_time_cache is the same pointer, if set?
+//		if (ptr->func == NULL || ptr->func->type == ZEND_INTERNAL_FUNCTION || ptr->func->op_array.cache_size == 0 || FNBIND_RUN_TIME_CACHE(&(ptr->func->op_array)) == NULL) {
+//			continue;
+//		}
+//		memset(FNBIND_RUN_TIME_CACHE(&(ptr->func->op_array)), 0, ptr->func->op_array.cache_size);
+//	}
+//
+//	PHP_FNBIND_ITERATE_THROUGH_OBJECTS_STORE_BEGIN(i)
+//		if (object->ce == zend_ce_closure) {
+//		zend_closure *cl = (zend_closure *)object;
+//			php_fnbind_clear_function_runtime_cache(&cl->func);
+//		}
+//	PHP_FNBIND_ITERATE_THROUGH_OBJECTS_STORE_END
+//}
+///* }}} */
 
 /* {{{ php_fnbind_fix_hardcoded_stack_sizes */
 static inline void php_fnbind_fix_hardcoded_stack_sizes(zend_function *f, zend_string *called_name_lower, zend_function *called_f)
@@ -874,47 +874,47 @@ static inline void php_fnbind_fix_hardcoded_stack_sizes(zend_function *f, zend_s
 }
 /* }}} */
 
-/* {{{ php_fnbind_fix_hardcoded_stack_sizes_for_function_table */
-static void php_fnbind_fix_hardcoded_stack_sizes_for_function_table(HashTable *function_table, zend_string *called_name_lower, zend_function *called_f)
-{
-	zend_function *f;
-	ZEND_HASH_FOREACH_PTR(function_table, f) {
-		php_fnbind_fix_hardcoded_stack_sizes(f, called_name_lower, called_f);
-	} ZEND_HASH_FOREACH_END();
-}
-/* }}} */
+///* {{{ php_fnbind_fix_hardcoded_stack_sizes_for_function_table */
+//static void php_fnbind_fix_hardcoded_stack_sizes_for_function_table(HashTable *function_table, zend_string *called_name_lower, zend_function *called_f)
+//{
+//	zend_function *f;
+//	ZEND_HASH_FOREACH_PTR(function_table, f) {
+//		php_fnbind_fix_hardcoded_stack_sizes(f, called_name_lower, called_f);
+//	} ZEND_HASH_FOREACH_END();
+//}
+///* }}} */
 
-/* {{{ php_fnbind_fix_hardcoded_stack_sizes */
-void php_fnbind_fix_all_hardcoded_stack_sizes(zend_string *called_name_lower, zend_function *called_f)
-{
-	uint32_t i;
-	zend_class_entry *ce;
-	zend_execute_data *ptr;
-
-	php_fnbind_fix_hardcoded_stack_sizes_for_function_table(EG(function_table), called_name_lower, called_f);
-
-	ZEND_HASH_FOREACH_PTR(EG(class_table), ce) {
-		php_fnbind_fix_hardcoded_stack_sizes_for_function_table(&(ce->function_table), called_name_lower, called_f);
-	} ZEND_HASH_FOREACH_END();
-
-	// This is also needed to get the top-level {main} script, which isn't in the function table
-	// FIXME what about other scripts that are include()ed
-	for (ptr = EG(current_execute_data); ptr != NULL; ptr = ptr->prev_execute_data) {
-		// TODO: I assume that ptr->run_time_cache is the same pointer, if set?
-		if (ptr->func == NULL || ptr->func->type != ZEND_USER_FUNCTION) {
-			continue;
-		}
-		php_fnbind_fix_hardcoded_stack_sizes(ptr->func, called_name_lower, called_f);
-	}
-
-	PHP_FNBIND_ITERATE_THROUGH_OBJECTS_STORE_BEGIN(i)
-		if (object->ce == zend_ce_closure) {
-		zend_closure *cl = (zend_closure *)object;
-			php_fnbind_fix_hardcoded_stack_sizes(&cl->func, called_name_lower, called_f);
-		}
-	PHP_FNBIND_ITERATE_THROUGH_OBJECTS_STORE_END
-}
-/* }}} */
+///* {{{ php_fnbind_fix_hardcoded_stack_sizes */
+//void php_fnbind_fix_all_hardcoded_stack_sizes(zend_string *called_name_lower, zend_function *called_f)
+//{
+//	uint32_t i;
+//	zend_class_entry *ce;
+//	zend_execute_data *ptr;
+//
+//	php_fnbind_fix_hardcoded_stack_sizes_for_function_table(EG(function_table), called_name_lower, called_f);
+//
+//	ZEND_HASH_FOREACH_PTR(EG(class_table), ce) {
+//		php_fnbind_fix_hardcoded_stack_sizes_for_function_table(&(ce->function_table), called_name_lower, called_f);
+//	} ZEND_HASH_FOREACH_END();
+//
+//	// This is also needed to get the top-level {main} script, which isn't in the function table
+//	// FIXME what about other scripts that are include()ed
+//	for (ptr = EG(current_execute_data); ptr != NULL; ptr = ptr->prev_execute_data) {
+//		// TODO: I assume that ptr->run_time_cache is the same pointer, if set?
+//		if (ptr->func == NULL || ptr->func->type != ZEND_USER_FUNCTION) {
+//			continue;
+//		}
+//		php_fnbind_fix_hardcoded_stack_sizes(ptr->func, called_name_lower, called_f);
+//	}
+//
+//	PHP_FNBIND_ITERATE_THROUGH_OBJECTS_STORE_BEGIN(i)
+//		if (object->ce == zend_ce_closure) {
+//		zend_closure *cl = (zend_closure *)object;
+//			php_fnbind_fix_hardcoded_stack_sizes(&cl->func, called_name_lower, called_f);
+//		}
+//	PHP_FNBIND_ITERATE_THROUGH_OBJECTS_STORE_END
+//}
+///* }}} */
 
 /* {{{ php_fnbind_reflection_update_property */
 static void php_fnbind_reflection_update_property(zend_object *object, const char *name, zval *value)
@@ -947,16 +947,16 @@ void php_fnbind_update_reflection_object_name(zend_object *object, int handle, c
 }
 /* }}} */
 
-/* {{{ php_fnbind_free_reflection_function */
-static void php_fnbind_free_reflection_function(zend_function *fptr)
-{
-	// Exact copy of ext/reflection's _free_function
-	if (fptr && (fptr->internal_function.fn_flags & ZEND_ACC_CALL_VIA_TRAMPOLINE)) {
-		zend_string_release(fptr->internal_function.function_name);
-		zend_free_trampoline(fptr);
-	}
-}
-/* }}} */
+///* {{{ php_fnbind_free_reflection_function */
+//static void php_fnbind_free_reflection_function(zend_function *fptr)
+//{
+//	// Exact copy of ext/reflection's _free_function
+//	if (fptr && (fptr->internal_function.fn_flags & ZEND_ACC_CALL_VIA_TRAMPOLINE)) {
+//		zend_string_release(fptr->internal_function.function_name);
+//		zend_free_trampoline(fptr);
+//	}
+//}
+///* }}} */
 
 /* {{{ reflection_object_from_obj
    Copied from ext/reflection/php_reflection.c */
@@ -966,90 +966,90 @@ static inline reflection_object *reflection_object_from_obj(zend_object *obj)
 }
 /* }}} */
 
-/* {{{ php_fnbind_delete_reflection_function_ptr
- 	Frees the parts of a reflection object referring to the removed method/function(/parameter?)  */
-static void php_fnbind_delete_reflection_function_ptr(reflection_object *intern)
-{
-	// Copied from ext/reflection's reflection_free_objects_storage
-	parameter_reference *reference;
-	if (intern->ptr) {
-		switch (intern->ref_type) {
-			case REF_TYPE_PARAMETER:
-				reference = (parameter_reference *)intern->ptr;
-				php_fnbind_free_reflection_function(reference->fptr);
-				efree(intern->ptr);
-				break;
-			case REF_TYPE_FUNCTION:
-				php_fnbind_free_reflection_function(intern->ptr);
-				break;
-			case REF_TYPE_PROPERTY: {
-#if PHP_VERSION_ID >= 70300
-				property_reference *prop_reference = (property_reference*)intern->ptr;
-				zend_string_release_ex(prop_reference->unmangled_name, 0);
-#if PHP_VERSION_ID >= 70400 && PHP_VERSION_ID < 80000
-				/* PHP 7.4 typed properties */
-				if (ZEND_TYPE_IS_NAME(prop_reference->prop.type)) {
-					zend_string_release(ZEND_TYPE_NAME(prop_reference->prop.type));
-				}
-#endif
-#endif
-				efree(intern->ptr);
-				break;
-			}
-				/* TODO: Look into whether ReflectionAttribute and ReflectionType should be handled */
-			default:
-				php_error_docref(NULL, E_ERROR, "Attempted to free ReflectionObject of unexpected REF_TYPE %d\n", (int)(intern->ref_type));
-				return;
-		}
-	}
-	intern->ptr = NULL;
-	// Do NOT call object destructors yet - ReflectionObject will do that in __destruct.
-}
-/* }}}*/
+///* {{{ php_fnbind_delete_reflection_function_ptr
+// 	Frees the parts of a reflection object referring to the removed method/function(/parameter?)  */
+//static void php_fnbind_delete_reflection_function_ptr(reflection_object *intern)
+//{
+//	// Copied from ext/reflection's reflection_free_objects_storage
+//	parameter_reference *reference;
+//	if (intern->ptr) {
+//		switch (intern->ref_type) {
+//			case REF_TYPE_PARAMETER:
+//				reference = (parameter_reference *)intern->ptr;
+//				php_fnbind_free_reflection_function(reference->fptr);
+//				efree(intern->ptr);
+//				break;
+//			case REF_TYPE_FUNCTION:
+//				php_fnbind_free_reflection_function(intern->ptr);
+//				break;
+//			case REF_TYPE_PROPERTY: {
+//#if PHP_VERSION_ID >= 70300
+//				property_reference *prop_reference = (property_reference*)intern->ptr;
+//				zend_string_release_ex(prop_reference->unmangled_name, 0);
+//#if PHP_VERSION_ID >= 70400 && PHP_VERSION_ID < 80000
+//				/* PHP 7.4 typed properties */
+//				if (ZEND_TYPE_IS_NAME(prop_reference->prop.type)) {
+//					zend_string_release(ZEND_TYPE_NAME(prop_reference->prop.type));
+//				}
+//#endif
+//#endif
+//				efree(intern->ptr);
+//				break;
+//			}
+//				/* TODO: Look into whether ReflectionAttribute and ReflectionType should be handled */
+//			default:
+//				php_error_docref(NULL, E_ERROR, "Attempted to free ReflectionObject of unexpected REF_TYPE %d\n", (int)(intern->ref_type));
+//				return;
+//		}
+//	}
+//	intern->ptr = NULL;
+//	// Do NOT call object destructors yet - ReflectionObject will do that in __destruct.
+//}
+///* }}}*/
 
-/* {{{ php_fnbind_remove_function_from_reflection_objects */
-void php_fnbind_remove_function_from_reflection_objects(zend_function *fe)
-{
-	uint32_t i;
-	extern PHPAPI zend_class_entry *reflection_function_ptr;
-	extern PHPAPI zend_class_entry *reflection_method_ptr;
-	extern PHPAPI zend_class_entry *reflection_parameter_ptr;
-
-	/* TODO: Look into whether ReflectionAttribute and ReflectionType should be handled */
-	PHP_FNBIND_ITERATE_THROUGH_OBJECTS_STORE_BEGIN(i)
-		if (object->ce == reflection_function_ptr) {
-			reflection_object *refl_obj = reflection_object_from_obj(object);
-			if (refl_obj->ptr == fe) {
-				php_fnbind_delete_reflection_function_ptr(refl_obj);
-				refl_obj->ptr = FNBIND_G(removed_function);
-				php_fnbind_update_reflection_object_name(object, i, FNBIND_G(removed_function_str));
-			}
-		} else if (object->ce == reflection_method_ptr) {
-			reflection_object *refl_obj = reflection_object_from_obj(object);
-			if (refl_obj->ptr == fe) {
-				zend_function *f = emalloc(sizeof(zend_function));
-				memcpy(f, FNBIND_G(removed_method), sizeof(zend_function));
-				f->common.scope = fe->common.scope;
-#ifdef ZEND_ACC_CALL_VIA_HANDLER
-				f->internal_function.fn_flags |= ZEND_ACC_CALL_VIA_HANDLER; // This is a trigger to free it from destructor
-#endif
-				zend_string_addref(f->internal_function.function_name);
-				php_fnbind_delete_reflection_function_ptr(refl_obj);
-				refl_obj->ptr = f;
-				php_fnbind_update_reflection_object_name(object, i, FNBIND_G(removed_method_str));
-			}
-		} else if (object->ce == reflection_parameter_ptr) {
-			reflection_object *refl_obj = reflection_object_from_obj(object);
-		parameter_reference *reference = (parameter_reference *)refl_obj->ptr;
-			if (reference && reference->fptr == fe) {
-				php_fnbind_delete_reflection_function_ptr(refl_obj);
-				refl_obj->ptr = NULL;
-				php_fnbind_update_reflection_object_name(object, i, FNBIND_G(removed_parameter_str));
-			}
-		}
-	PHP_FNBIND_ITERATE_THROUGH_OBJECTS_STORE_END
-}
-/* }}} */
+///* {{{ php_fnbind_remove_function_from_reflection_objects */
+//void php_fnbind_remove_function_from_reflection_objects(zend_function *fe)
+//{
+//	uint32_t i;
+//	extern PHPAPI zend_class_entry *reflection_function_ptr;
+//	extern PHPAPI zend_class_entry *reflection_method_ptr;
+//	extern PHPAPI zend_class_entry *reflection_parameter_ptr;
+//
+//	/* TODO: Look into whether ReflectionAttribute and ReflectionType should be handled */
+//	PHP_FNBIND_ITERATE_THROUGH_OBJECTS_STORE_BEGIN(i)
+//		if (object->ce == reflection_function_ptr) {
+//			reflection_object *refl_obj = reflection_object_from_obj(object);
+//			if (refl_obj->ptr == fe) {
+//				php_fnbind_delete_reflection_function_ptr(refl_obj);
+//				refl_obj->ptr = FNBIND_G(removed_function);
+//				php_fnbind_update_reflection_object_name(object, i, FNBIND_G(removed_function_str));
+//			}
+//		} else if (object->ce == reflection_method_ptr) {
+//			reflection_object *refl_obj = reflection_object_from_obj(object);
+//			if (refl_obj->ptr == fe) {
+//				zend_function *f = emalloc(sizeof(zend_function));
+//				memcpy(f, FNBIND_G(removed_method), sizeof(zend_function));
+//				f->common.scope = fe->common.scope;
+//#ifdef ZEND_ACC_CALL_VIA_HANDLER
+//				f->internal_function.fn_flags |= ZEND_ACC_CALL_VIA_HANDLER; // This is a trigger to free it from destructor
+//#endif
+//				zend_string_addref(f->internal_function.function_name);
+//				php_fnbind_delete_reflection_function_ptr(refl_obj);
+//				refl_obj->ptr = f;
+//				php_fnbind_update_reflection_object_name(object, i, FNBIND_G(removed_method_str));
+//			}
+//		} else if (object->ce == reflection_parameter_ptr) {
+//			reflection_object *refl_obj = reflection_object_from_obj(object);
+//		parameter_reference *reference = (parameter_reference *)refl_obj->ptr;
+//			if (reference && reference->fptr == fe) {
+//				php_fnbind_delete_reflection_function_ptr(refl_obj);
+//				refl_obj->ptr = NULL;
+//				php_fnbind_update_reflection_object_name(object, i, FNBIND_G(removed_parameter_str));
+//			}
+//		}
+//	PHP_FNBIND_ITERATE_THROUGH_OBJECTS_STORE_END
+//}
+///* }}} */
 
 /* {{{ php_fnbind_generate_lambda_function
     Heavily borrowed from ZEND_FUNCTION(create_function).
@@ -1267,10 +1267,10 @@ static void php_fnbind_function_add_or_update(INTERNAL_FUNCTION_PARAMETERS, int 
 		RETURN_FALSE;
 	}
 
-	if (add_or_update == HASH_UPDATE &&
-	    (orig_fe = php_fnbind_fetch_function(funcname, PHP_FNBIND_FETCH_FUNCTION_REMOVE)) == NULL) {
-		RETURN_FALSE;
-	}
+//	if (add_or_update == HASH_UPDATE &&
+////	    (orig_fe = php_fnbind_fetch_function(funcname, PHP_FNBIND_FETCH_FUNCTION_REMOVE)) == NULL) {
+////		RETURN_FALSE;
+//	}
 
 	/* UTODO */
 	funcname_lower = zend_string_tolower(funcname);
@@ -1278,6 +1278,7 @@ static void php_fnbind_function_add_or_update(INTERNAL_FUNCTION_PARAMETERS, int 
 	if (add_or_update == HASH_ADD && zend_hash_exists(EG(function_table), funcname_lower)) {
 		zend_string_release(funcname_lower);
 		php_error_docref(NULL, E_WARNING, "Function %s() already exists", ZSTR_VAL(funcname));
+		// TODO - change this to an exception
 		RETURN_FALSE;
 	}
 
@@ -1309,13 +1310,13 @@ static void php_fnbind_function_add_or_update(INTERNAL_FUNCTION_PARAMETERS, int 
 	php_fnbind_modify_function_doc_comment(func, doc_comment);
 
 	if (add_or_update == HASH_UPDATE) {
-		php_fnbind_remove_function_from_reflection_objects(orig_fe);
-		php_fnbind_destroy_misplaced_internal_function(orig_fe, funcname_lower);
-
-		php_fnbind_clear_all_functions_runtime_cache();
-
-		/* When redefining or adding a function (which may have been removed before), update the stack sizes it will be called with. */
-		php_fnbind_fix_all_hardcoded_stack_sizes(funcname_lower, func);
+//		php_fnbind_remove_function_from_reflection_objects(orig_fe);
+//		php_fnbind_destroy_misplaced_internal_function(orig_fe, funcname_lower);
+//
+//		php_fnbind_clear_all_functions_runtime_cache();
+//
+//		/* When redefining or adding a function (which may have been removed before), update the stack sizes it will be called with. */
+//		php_fnbind_fix_all_hardcoded_stack_sizes(funcname_lower, func);
 	}
 
 	if (fnbind_zend_hash_add_or_update_function_table_ptr(EG(function_table), funcname_lower, func, add_or_update) == NULL) {

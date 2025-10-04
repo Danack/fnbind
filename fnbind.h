@@ -146,10 +146,10 @@ static inline void *fnbind_zend_hash_add_or_update_ptr(HashTable *ht, zend_strin
 /* fnbind_functions.c */
 #define FNBIND_TEMP_FUNCNAME  "__fnbind_temporary_function__"
 int php_fnbind_check_call_stack(zend_op_array *op_array);
-void php_fnbind_clear_all_functions_runtime_cache();
-void php_fnbind_fix_all_hardcoded_stack_sizes(zend_string *called_name_lower, zend_function *called_f);
+//void php_fnbind_clear_all_functions_runtime_cache();
+//void php_fnbind_fix_all_hardcoded_stack_sizes(zend_string *called_name_lower, zend_function *called_f);
 
-void php_fnbind_remove_function_from_reflection_objects(zend_function *fe);
+//void php_fnbind_remove_function_from_reflection_objects(zend_function *fe);
 // void php_fnbind_function_copy_ctor(zend_function *fe, zend_string *newname, char orig_fe_type);
 zend_function *php_fnbind_function_clone(zend_function *fe, zend_string *newname, char orig_fe_type);
 void php_fnbind_function_dtor(zend_function *fe);
