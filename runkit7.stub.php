@@ -13,7 +13,3 @@ function runkit7_function_add(string $function_name, $argument_list_or_closure, 
  * @deprecated
  */
 function runkit_function_add(string $function_name, $argument_list_or_closure, ?string $code_or_doc_comment = null, ?bool $return_by_reference = null, ?string $doc_comment = null, ?string $return_type = null, ?bool $is_strict = null): bool {}
-#endif
-
-
-

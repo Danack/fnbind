@@ -4,7 +4,7 @@ runkit_function_add() function
 error_reporting=E_ALL
 display_errors=on
 --SKIPIF--
-<?php if(!extension_loaded("runkit7") || !RUNKIT7_FEATURE_MANIPULATION) print "skip"; ?>
+<?php if(!extension_loaded("runkit7") ) print "skip"; ?>
 --FILE--
 <?php
 $name = 'runkitSample';

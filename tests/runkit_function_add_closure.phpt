@@ -2,7 +2,7 @@
 runkit7_method_add() function with closure
 --SKIPIF--
 <?php
-	if(!extension_loaded("runkit7") || !RUNKIT7_FEATURE_MANIPULATION) print "skip";
+	if(!extension_loaded("runkit7") ) print "skip";
 ?>
 --INI--
 display_errors=on

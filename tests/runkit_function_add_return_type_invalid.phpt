@@ -1,7 +1,7 @@
 --TEST--
 runkit7_function_add() function should detect invalid return types passed in as a string
 --SKIPIF--
-<?php if(!extension_loaded("runkit7") || !RUNKIT7_FEATURE_MANIPULATION) print "skip"; ?>
+<?php if(!extension_loaded("runkit7") ) print "skip"; ?>
 --INI--
 display_errors=on
 --FILE--

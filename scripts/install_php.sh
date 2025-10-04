@@ -6,7 +6,7 @@ set -x
 
 # git clone https://github.com/php/php-src
 
-SRCFILE="php-7.3.32"
+SRCFILE="php-8.4.13"
 
 mkdir -p /var/app/php_src/${SRCFILE}
 tar -xzf /var/app/php_src/${SRCFILE}.tar.gz -C /var/app/php_src/${SRCFILE} --strip-components=1
