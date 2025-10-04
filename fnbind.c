@@ -38,17 +38,12 @@ ZEND_DECLARE_MODULE_GLOBALS(fnbind)
 	ZEND_ARG_INFO(pass_by_ref, name)
 #endif
 
-#define PHP_FE_AND_FALIAS(fnbind_function_name, unused_function_name) \
-	PHP_FE(fnbind_function_name,									arginfo_ ## fnbind_function_name)
-
-
 PHP_FUNCTION(fnbind_function_add);
-
 
 /* {{{ fnbind_functions[]
  */
 zend_function_entry fnbind_functions[] = {
-	PHP_FE_AND_FALIAS(fnbind_function_add,			unused_function_add)
+	PHP_FE(fnbind_function_add, arginfo_fnbind_function_add)
 	{NULL, NULL, NULL}
 };
 /* }}} */
