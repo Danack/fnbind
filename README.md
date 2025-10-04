@@ -26,111 +26,34 @@ Compatibility: PHP7.2 to PHP 8.1
 - This adds the ability to set return types (including nullable return types) on added/redefined functions.
 - This adds the ability to set `declare(strict_types=1)` on added/redefined functions.
 
-Superglobals work reliably when tested on web servers and tests.
+
 Class and function manipulation is recommended only for unit tests.
 
-- The `runkit.superglobal` ini setting works reliably in PHP 7.
-- Manipulating user-defined (i.e. not builtin or part of extensions) functions and methods via `runkit7_method_*` and `runkit7_function_*` generally works, **but is recommended only in unit tests** (unlikely to crash, but will cause memory leaks)
-- Manipulating built in functions may cause segmentation faults in rare cases.
-  File a bug report if you see this.
-  **Function and method manipulation is recommended only for debugging or unit tests, because of the possibility of crashes**.
-  (Manipulating built in class methods is impossible/not supported)
-- Adding default properties to classes doesn't work in php7, because of a change
-  in the way PHP stores objects.
-  Eventually, I plan to add `runkit_default_property_modify`, which will replace one default value with a different default property, keeping the number of properties the same.
-  See the reasons for disabling property manipulation at [PROPERTY\_MANIPULATION.md](./PROPERTY_MANIPULATION.md)
-  As a substitute, user code can do the following things:
 
-  - rename (or add) `__construct` with `runkit7_method_rename`/`runkit7_method_add`,
-    and create a new version of `__construct` that sets the properties, then calls the original constructor.
-  - For getting/setting properties of **individual objects**, see [ReflectionProperty](https://secure.php.net/manual/en/class.reflectionproperty.php)
-    `ReflectionProperty->setAccessible(true)` and `ReflectionProperty->setValue()`, etc.
-- Modifying constants works for constants declared in different files, but does not work for constants within the same file.
-  PHP7 inlines constants within the same file if they are guaranteed to have only one definition.
-  Patching php-src and/or opcache to not inline constants (e.g. based on a php.ini setting) is possible, but hasn't been tried yet.
-- Sandboxing (and `runkit_lint`) were removed.
+- Manipulating user-defined (i.e. not builtin or part of extensions) functions and methods via `runkit7_method_*` and `runkit7_function_*` generally works, **but is recommended only in unit tests** (unlikely to crash, but will cause memory leaks)
+
+
 
 The following contributions are welcome:
 
--   Pull requests with  PHP5 -> PHP7 code migration of functions
--   New test cases for features that no longer work in PHP7, or bug reports containing code crashing runkit7.
--   Issues for PHP language features that worked in PHP5, but no longer work in PHP7,
-    for the implemented methods (`runkit7_function_*` and `runkit7_method_*`)
 -   Fixes and documentation.
 
-Other methods and corresponding tests are disabled/skipped because changes to php internals in php7 made them impractical.
 
-This is runkit7 4.x. Use runkit7 2.x for PHP 7.1 support, or 1.x for PHP 7.0 support.
 
-Examples
---------
 
-The following mocking libraries work with runkit7.
-
-- [![Build Status](https://travis-ci.org/runkit7/Timecop-PHP.svg?branch=master)](https://travis-ci.org/runkit7/Timecop-PHP) [timecop-PHP (Fork)](https://github.com/runkit7/Timecop-PHP), a time testing library inspired by the ruby timecop gem (requires `runkit.internal_override=1`, suggested only for unit tests)
-- [![CI](https://github.com/tototoshi/staticmock/actions/workflows/ci.yml/badge.svg)](https://github.com/tototoshi/staticmock/actions/workflows/ci.yml) [staticmock](https://github.com/tototoshi/staticmock), a mockery-like DSL to replace static methods in tests.
-- [![Build Status](https://travis-ci.org/runkit7/SimpleStaticMock.svg?branch=master)](https://travis-ci.org/runkit7/SimpleStaticMock) [SimpleStaticMock (Fork)](https://github.com/runkit7/SimpleStaticMock), a very simple class to mock static methods in unit tests. Unrelated to tototoshi/staticmock.
-- [![Build Status](https://travis-ci.org/runkit7/TraceOn.svg?branch=master)](https://travis-ci.org/runkit7/TraceOn) [TraceOn (Fork)](https://github.com/runkit7/TraceOn), a simple PHP utility to trace(investigate) invocations of instance/static/global methods.
-
-## PHP7 SPECIFIC DETAILS
-
-### Bugs in runkit7
-
--   There are segmentation faults when manipulating internal functions
-    (a.k.a. "runkit.internal_override=1")
-    (when you rename/redefine/(copy?) internal functions, and call internal functions with user functions' implementation, or vice versa)
-    (and when functions redefinitions aren't cleaned up)
-    Many (but not all) of these crashes have been fixed.
--   There are reference counting bugs causing memory leaks.
-    2 calls to `emalloc` have been temporarily replaced with calls to `pemalloc`
-    so that tests would not crash during shutdown (and other reasons)
--   The Zend VM bytecode representation may change in 8.0 betas and in future minor/major PHP releases after 8.0.
-    Any new opcodes added may not work as expected with each new minor php version release.
-
-### APIs for PHP7
 
 #### Implemented APIs for PHP7
 
 NOTE: Most `runkit7_*()` functions have aliases of `runkit_*()`.
 
 -   `runkit7_function_*`: Most tests are passing. There are some memory leaks when renaming internal functions.
--   `runkit7_method_*`: Most tests are passing. There are some memory leaks when renaming internal functions.
--   `runkit7_zval_inspect`: Partly passing, and needs to be rewritten because of PHP7's zval changes.
--   `runkit7_constant_add` works. Other constant manipulation functions don't work for constants accessed within the same file due to the compiler inlining their values for performance.
--   Runkit superglobals.
 
-#### Unsupported APIs for PHP7:
-(These functions will be missing. Some of these should be possible to implement.)
 
--   `runkit_class_adopt` and `runkit_class_emancipate`
-    Disabled because of [bugs related to properties](./PROPERTY_MANIPULATION.md).
--   `runkit7_import`
-	This had known crashes in php 7.3+, and was removed in runkit7 4.0 because they weren't straightforward to fix.
-	Use runkit7 3.x if you need to continue using this functionality.
--   `runkit_lint*`
-    Might be possible if this is rewritten to use actual threading: See [issue #114](https://github.com/runkit7/runkit7/issues/114)
--   `runkit7_constant_*` : `runkit7_constant_add` works reliably, other methods don't.
-    This works better when the constants are declared in a file separate from the file accessing that constant.
--   `runkit_default_property_*`
-    Disabled because of [bugs related to properties](./PROPERTY_MANIPULATION.md)
-    See [issue #30](https://github.com/runkit7/runkit7/issues/30) (implement function to modify only) and [issue #113](https://github.com/runkit7/runkit7/issues/113) (Manipulate static properties)
-
-    `runkit_default_property_add` has been removed in php7 - it requires `realloc`ing a different zval to add a property to the property table
-    That would break a lot of things (PHP internals, other PHP modules, etc)
--   `runkit_return_value_used`: Removed, was not working and unrelated to other features.
-    `vld` seems to have a working implementation in the opcode analyzer, not familiar with how it works.
-
-#### Reasons for disabling property manipulation
-
-See [PROPERTY\_MANIPULATION.md](./PROPERTY_MANIPULATION.md)
 
 ### FURTHER WORK
 
 See https://github.com/runkit7/runkit7/issues
 
-Tasks for the near future:
-
--   Replace property manipulation with `runkit_default_property_modify` (https://github.com/runkit7/runkit7/issues/30)
 
 ### Contributing
 

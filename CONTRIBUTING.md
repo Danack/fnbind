@@ -1,6 +1,7 @@
 # Contributing
 
-Issues are tracked through [Github Issues](https://github.com/runkit7/runkit7/issues).
+Issues are tracked through [Github Issues](https://github.com/danack/fnbind/issues).
+
 Please check if there are similar issues via github search before filing an issue.
 
 Pull requests are welcome, test cases covering bug fixes or new functionality are preferred.
@@ -63,11 +64,3 @@ Notes on `HashTable`s
   Depending on the table being used, these may call destructor functions when pointers are removed.
 
 Changes to the internal representation of `HashTable`s require a lot of code changes.
-
-Miscellaneous notes on differences between PHP5 and PHP7
-
-- zend opcode, opline, and `zend_function`s have changed in PHP7.
-- Stack frame layout has changed.
-- Reflection data structures changed.
-- And so on: https://wiki.php.net/phpng-upgrading (Upgrading extensions from PHP5 to PHP7)
-- https://github.com/php/php-src/blob/PHP-7.0/UPGRADING - Describes changes to PHP that can be seen by PHP programmers. (E.g. backwards incompatible changes, deprecated functionality, new language features, etc.)

@@ -1,26 +1,16 @@
 // vim:ft=javascript
 /* eslint-disable no-undef */
 
+// This file may contain errors.
+// I do not care about Windows, though will take PRs.
+
 ARG_ENABLE("runkit7", "Enable runkit7 support", "no");
-ARG_ENABLE("runkit7-modify", "Enable runtime manipulation", "yes");
-ARG_ENABLE("runkit7-super", "Enable registration of user-defined autoglobals", "yes");
 
 if (PHP_RUNKIT7 != "no") {
     var dll = get_define('PHPDLL');
     var is_php5 = null != dll.match(/^php5/);
     if (is_php5) {
         ERROR("Runkit7 supports PHP 7.1 and newer. It does not support PHP 5");
-    }
-
-    // TODO: Why isn't HAVE_CONFIG_H being set all of the time?
-    if (PHP_RUNKIT7_MODIFY != "no") {
-        // Hackish way to enable these CFLAGS to include the necessary flags
-        ADD_FLAG('CFLAGS_RUNKIT7', ' /D PHP_RUNKIT7_FEATURE_MODIFY');
-        AC_DEFINE("PHP_RUNKIT7_FEATURE_MODIFY", 1, "Runkit Manipulation");
-    }
-    if (PHP_RUNKIT7_SUPER != "no") {
-        ADD_FLAG('CFLAGS_RUNKIT7', ' /D PHP_RUNKIT7_FEATURE_SUPER');
-        AC_DEFINE("PHP_RUNKIT7_FEATURE_SUPER", 1, "Runkit Superglobals");
     }
 
     AC_DEFINE('HAVE_RUNKIT7', 1);
@@ -30,9 +20,5 @@ if (PHP_RUNKIT7 != "no") {
     EXTENSION("runkit7", "runkit.c " +
                         "runkit_common.c " +
                         "runkit_functions.c " +
-                        "runkit_methods.c " +
-                        "runkit_classes.c " +
-                        "runkit_props.c " +
-                        "runkit_constants.c " +
                         "runkit_zend_execute_API.c ");
 }
