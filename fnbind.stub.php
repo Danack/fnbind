@@ -43,6 +43,15 @@ function fnbind_add_eval(
 }
 
 
+//function fnbind_function_add(
+//string $function_name,
+// $argument_list_or_closure,
+//?string $code_or_doc_comment = null,
+//?bool $return_by_reference = null,
+//?string $doc_comment = null,
+//?string $return_type = null,
+//?bool $is_strict = null): bool {}
+
 /**
  * Add a new function, similar to create_function()
  * Gives you more control over the type of function being created
