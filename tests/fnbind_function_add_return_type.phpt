@@ -8,7 +8,7 @@ display_errors=on
 <?php declare(strict_types=1);
 ini_set('error_reporting', (string)(E_ALL));
 
-fnbind_function_add('fnbind_function', 'string $a, $valid=false', 'return $valid ? $a : new stdClass();', false, '/** doc comment */', 'string');
+fnbind_add_eval('fnbind_function', 'string $a, $valid=false', 'return $valid ? $a : new stdClass();', false, '/** doc comment */', 'string');
 printf("Returned %s\n", fnbind_function('foo', true));
 try {
 	printf("Returned %s\n", fnbind_function('notastring', false));

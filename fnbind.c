@@ -38,12 +38,14 @@ ZEND_DECLARE_MODULE_GLOBALS(fnbind)
 	ZEND_ARG_INFO(pass_by_ref, name)
 #endif
 
-PHP_FUNCTION(fnbind_function_add);
+PHP_FUNCTION(fnbind_add_eval);
+PHP_FUNCTION(fnbind_add_closure);
 
 /* {{{ fnbind_functions[]
  */
 zend_function_entry fnbind_functions[] = {
-	PHP_FE(fnbind_function_add, arginfo_fnbind_function_add)
+	PHP_FE(fnbind_add_eval, arginfo_fnbind_add_eval)
+	PHP_FE(fnbind_add_closure, arginfo_fnbind_add_closure)
 	{NULL, NULL, NULL}
 };
 /* }}} */
@@ -143,7 +145,6 @@ PHP_MINIT_FUNCTION(fnbind)
 #endif
 
 	INIT_CLASS_ENTRY(ce, "FnBindException", NULL);
-
 
 	php_fnbind_exception_class_entry = zend_register_internal_class_ex(&ce, zend_ce_exception);
 

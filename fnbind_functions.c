@@ -1062,11 +1062,24 @@ static void php_fnbind_function_add_or_update(INTERNAL_FUNCTION_PARAMETERS, int 
 	proto bool fnbind_function_add(string funcname, closure code[, string doc_comment, [bool is_strict]])
 	Add a new function, similar to create_function, but allows specifying name
 	*/
-PHP_FUNCTION(fnbind_function_add)
+PHP_FUNCTION(fnbind_add_eval)
 {
 	php_fnbind_function_add_or_update(INTERNAL_FUNCTION_PARAM_PASSTHRU, HASH_ADD);
 }
 /* }}} */
+
+
+
+/* {{{  proto bool fnbind_function_add(string funcname, string arglist, string code[, bool return_by_reference=false[, string doc_comment = null, [string return_type = null, [bool is_strict = null]]]])
+	proto bool fnbind_function_add(string funcname, closure code[, string doc_comment, [bool is_strict]])
+	Add a new function, similar to create_function, but allows specifying name
+	*/
+PHP_FUNCTION(fnbind_add_closure)
+{
+	php_fnbind_function_add_or_update(INTERNAL_FUNCTION_PARAM_PASSTHRU, HASH_ADD);
+}
+/* }}} */
+
 
 /*
  * Local variables:

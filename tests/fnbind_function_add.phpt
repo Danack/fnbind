@@ -5,7 +5,7 @@ fnbind_function_add() function
 --FILE--
 <?php
 $name = 'fnbindSample';
-fnbind_function_add($name, '$a, $b, $c = "baz"', 'static $is="is"; for($i=0; $i<10; $i++) {} echo "a $is $a\nb $is $b\nc $is $c\n";');
+fnbind_add_eval($name, '$a, $b, $c = "baz"', 'static $is="is"; for($i=0; $i<10; $i++) {} echo "a $is $a\nb $is $b\nc $is $c\n";');
 fnbindSample('foo','bar');
 echo $name;
 ?>

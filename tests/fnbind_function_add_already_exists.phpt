@@ -12,7 +12,7 @@ function fnbindAlreadyExists() {
 $name = 'fnbindAlreadyExists';
 
 try {
-    fnbind_function_add($name, '$a, $b, $c = "baz"', 'static $is="is"; for($i=0; $i<10; $i++) {} echo "a $is $a\nb $is $b\nc $is $c\n";');
+    fnbind_add_eval($name, '$a, $b, $c = "baz"', 'static $is="is"; for($i=0; $i<10; $i++) {} echo "a $is $a\nb $is $b\nc $is $c\n";');
     echo "Error, no exception thrown.";
 }
 catch (\FnBindException $e) {

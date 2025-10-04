@@ -9,8 +9,8 @@ error_reporting=E_ALL
 --FILE--
 <?php
 foreach ([
-    'fnbind_function_add',
-    'fnbind_function_add',
+    'fnbind_add_eval',
+    'fnbind_add_closure',
 ] as $name) {
 $function = new ReflectionFunction($name);
 printf("%-30s: %d to %d args: (%s)%s\n",
@@ -36,5 +36,5 @@ printf("%-30s: %d to %d args: (%s)%s\n",
 
 ?>
 --EXPECT--
-fnbind_function_add           : 2 to 7 args: (string $function_name, $argument_list_or_closure, ?string $code_or_doc_comment, ?bool $return_by_reference, ?string $doc_comment, ?string $return_type, ?bool $is_strict)
-fnbind_function_add           : 2 to 7 args: (string $function_name, $argument_list_or_closure, ?string $code_or_doc_comment, ?bool $return_by_reference, ?string $doc_comment, ?string $return_type, ?bool $is_strict)
+fnbind_add_eval               : 3 to 7 args: (string $funcname, string $arglist, string $code, ?bool $return_by_reference, ?string $doc_comment, ?string $return_type, ?bool $is_strict)
+fnbind_add_closure            : 2 to 4 args: (string $funcname, Closure $closure, ?string $doc_comment, ?bool $is_strict)

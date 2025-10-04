@@ -1,5 +1,5 @@
 --TEST--
-fnbind_method_add() function with closure
+fnbind_add_closure() function with closure
 --SKIPIF--
 <?php
 	if(!extension_loaded("fnbind") ) print "skip";
@@ -13,7 +13,7 @@ class test {
 	public function run() {
 		$c = 'use';
 		$d = 'ref_use';
-		fnbind_function_add('fnbind_function',
+		fnbind_add_closure('fnbind_function',
 			function($a, $b = "bar") use ($c, &$d) {
 				static $is="is";
 				global $g;
