@@ -16,6 +16,7 @@
 */
 
 #include "fnbind.h"
+#include "Zend/zend_exceptions.h"
 #include "Zend/zend_extensions.h"
 #include "SAPI.h"
 
@@ -26,6 +27,8 @@
 #endif
 
 #include "fnbind_arginfo.h"
+
+zend_class_entry *php_fnbind_exception_class_entry;
 
 ZEND_DECLARE_MODULE_GLOBALS(fnbind)
 
@@ -142,11 +145,18 @@ static void php_fnbind_globals_ctor(void *pDest)
  */
 PHP_MINIT_FUNCTION(fnbind)
 {
+	zend_class_entry ce;
+
 #ifdef ZTS
 	ts_allocate_id(&fnbind_globals_id, sizeof(zend_fnbind_globals), php_fnbind_globals_ctor, NULL);
 #else
 	php_fnbind_globals_ctor(&fnbind_globals);
 #endif
+
+	INIT_CLASS_ENTRY(ce, "FnBindException", NULL);
+
+
+	php_fnbind_exception_class_entry = zend_register_internal_class_ex(&ce, zend_ce_exception);
 
 	REGISTER_INI_ENTRIES();
 

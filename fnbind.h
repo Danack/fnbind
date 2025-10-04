@@ -67,7 +67,7 @@ static inline void *_debug_emalloc(void *data, int bytes, char *file, int line)
 #define PHP_FNBIND_OVERRIDE_OBJECTS           0x8000
 
 
-
+extern zend_class_entry *php_fnbind_exception_class_entry;
 
 
 #include "Zend/zend_object_handlers.h"

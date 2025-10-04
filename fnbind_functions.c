@@ -19,6 +19,7 @@
 #include "php_fnbind_hash.h"
 #include "php_fnbind_zend_execute_API.h"
 
+#include "Zend/zend_exceptions.h"
 #include "Zend/zend.h"
 #if PHP_VERSION_ID >= 80000
 #include "Zend/zend_attributes.h"
@@ -1277,8 +1278,7 @@ static void php_fnbind_function_add_or_update(INTERNAL_FUNCTION_PARAMETERS, int 
 
 	if (add_or_update == HASH_ADD && zend_hash_exists(EG(function_table), funcname_lower)) {
 		zend_string_release(funcname_lower);
-		php_error_docref(NULL, E_WARNING, "Function %s() already exists", ZSTR_VAL(funcname));
-		// TODO - change this to an exception
+		zend_throw_exception_ex(php_fnbind_exception_class_entry, 0, "Function %s() already exists", ZSTR_VAL(funcname));
 		RETURN_FALSE;
 	}
 
