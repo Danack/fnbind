@@ -11,6 +11,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
 }
   $bar = new Bar(); $bar->quux(...);
   fnbind_add_closure('foo', $bar->quux(...));
+  foo(); // Output is "Hello world!"
  </description>
  <lead>
   <name>Dan Ackroyd</name>
