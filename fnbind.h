@@ -83,10 +83,6 @@ PHP_MINFO_FUNCTION(fnbind);
 PHP_FUNCTION(fnbind_function_add);
 
 ZEND_BEGIN_MODULE_GLOBALS(fnbind)
-	HashTable *misplaced_internal_functions;
-	const char *name_str, *removed_method_str, *removed_function_str, *removed_parameter_str;
-	zend_function *removed_function, *removed_method;
-	zend_bool module_moved_to_front;
 	int original_func_resource_handle;
 ZEND_END_MODULE_GLOBALS(fnbind)
 

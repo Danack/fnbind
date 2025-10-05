@@ -84,32 +84,6 @@ int php_fnbind_check_call_stack(zend_op_array *op_array)
 #define PHP_FNBIND_FETCH_FUNCTION_RENAME	2
 
 
-/* {{{ php_fnbind_ensure_misplaced_internal_functions_table_exists */
-static inline void php_fnbind_ensure_misplaced_internal_functions_table_exists()
-{
-	if (!FNBIND_G(misplaced_internal_functions)) {
-		ALLOC_HASHTABLE(FNBIND_G(misplaced_internal_functions));
-		zend_hash_init(FNBIND_G(misplaced_internal_functions), 4, NULL, NULL, 0);
-	}
-}
-/* }}} */
-
-/* {{{ php_fnbind_add_to_misplaced_internal_functions */
-static inline void php_fnbind_add_to_misplaced_internal_functions(zend_function *fe, zend_string *name_lower)
-{
-	if (fe->type == ZEND_INTERNAL_FUNCTION &&
-	    (!FNBIND_G(misplaced_internal_functions) ||
-	     !zend_hash_exists(FNBIND_G(misplaced_internal_functions), name_lower))
-	) {
-		zval tmp;
-		php_fnbind_ensure_misplaced_internal_functions_table_exists();
-		// Add misplaced internal functions to a list of strings, to be wiped out on request shutdown (before restoring originals)
-		ZVAL_STR(&tmp, name_lower);
-		zend_string_addref(name_lower);  // TODO: Free this in calls to php_fnbind_destroy_misplaced_internal_function on shutdown?
-		zend_hash_next_index_insert(FNBIND_G(misplaced_internal_functions), &tmp);
-	}
-}
-/* }}} */
 
 
 #ifdef RT_CONSTANT_EX

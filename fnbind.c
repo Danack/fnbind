@@ -72,15 +72,6 @@ PHP_INI_END()
 ZEND_GET_MODULE(fnbind)
 #endif
 
-ZEND_FUNCTION(_php_fnbind_removed_function)
-{
-	php_error_docref(NULL, E_ERROR, "A function removed by fnbind was somehow invoked");
-}
-ZEND_FUNCTION(_php_fnbind_removed_method)
-{
-	php_error_docref(NULL, E_ERROR, "A method removed by fnbind was somehow invoked");
-}
-
 static inline void _php_fnbind_init_stub_function(const char *name, ZEND_NAMED_FUNCTION(handler), zend_function **result)
 {
 	zend_function *fn = pemalloc(sizeof(zend_function), 1);
@@ -104,11 +95,6 @@ static inline void _php_fnbind_init_stub_function(const char *name, ZEND_NAMED_F
 static void php_fnbind_globals_ctor(void *pDest)
 {
 	zend_fnbind_globals *fnbind_global = (zend_fnbind_globals *)pDest;
-	fnbind_global->misplaced_internal_functions = NULL;
-	fnbind_global->name_str = "name";
-	fnbind_global->removed_method_str = "__method_removed_by_fnbind__";
-	fnbind_global->removed_function_str = "__function_removed_by_fnbind__";
-	fnbind_global->removed_parameter_str = "__parameter_removed_by_fnbind__";
 
 #if PHP_VERSION_ID >= 80000
 	fnbind_global->original_func_resource_handle = zend_get_resource_handle("fnbind");
@@ -118,9 +104,6 @@ static void php_fnbind_globals_ctor(void *pDest)
 		fnbind_global->original_func_resource_handle = zend_get_resource_handle(&placeholder);
 	}
 #endif
-
-	_php_fnbind_init_stub_function("__function_removed_by_fnbind__", ZEND_FN(_php_fnbind_removed_function), &fnbind_global->removed_function);
-	_php_fnbind_init_stub_function("__method_removed_by_fnbind__", ZEND_FN(_php_fnbind_removed_method), &fnbind_global->removed_method);
 
 }
 
@@ -165,10 +148,6 @@ PHP_MSHUTDOWN_FUNCTION(fnbind)
  */
 PHP_RINIT_FUNCTION(fnbind)
 {
-
-
-	FNBIND_G(misplaced_internal_functions) = NULL;
-	FNBIND_G(module_moved_to_front) = 0;
 #if PHP_VERSION_ID >= 80200
 	/* ZEND_INIT_FCALL now asserts that the function exists in the symbol table at runtime. */
 	CG(compiler_options) |= ZEND_COMPILE_IGNORE_USER_FUNCTIONS | ZEND_COMPILE_IGNORE_INTERNAL_FUNCTIONS;
