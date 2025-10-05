@@ -84,9 +84,6 @@ PHP_FUNCTION(fnbind_function_add);
 
 ZEND_BEGIN_MODULE_GLOBALS(fnbind)
 	HashTable *misplaced_internal_functions;
-	HashTable *replaced_internal_functions;
-	// php_fnbind_default_class_members_list_element *removed_default_class_members;
-	zend_bool internal_override;
 	const char *name_str, *removed_method_str, *removed_function_str, *removed_parameter_str;
 	zend_function *removed_function, *removed_method;
 	zend_bool module_moved_to_front;
@@ -146,49 +143,19 @@ static inline void *fnbind_zend_hash_add_or_update_ptr(HashTable *ht, zend_strin
 /* fnbind_functions.c */
 #define FNBIND_TEMP_FUNCNAME  "__fnbind_temporary_function__"
 int php_fnbind_check_call_stack(zend_op_array *op_array);
-//void php_fnbind_clear_all_functions_runtime_cache();
-//void php_fnbind_fix_all_hardcoded_stack_sizes(zend_string *called_name_lower, zend_function *called_f);
 
-//void php_fnbind_remove_function_from_reflection_objects(zend_function *fe);
-// void php_fnbind_function_copy_ctor(zend_function *fe, zend_string *newname, char orig_fe_type);
+
 zend_function *php_fnbind_function_clone(zend_function *fe, zend_string *newname, char orig_fe_type);
 void php_fnbind_function_dtor(zend_function *fe);
 int php_fnbind_remove_from_function_table(HashTable *function_table, zend_string *func_lower);
 void *php_fnbind_update_function_table(HashTable *function_table, zend_string *func_lower, zend_function *f);
-int php_fnbind_generate_lambda_method(const zend_string *arguments, const zend_string *return_type, const zend_bool is_strict, const zend_string *phpcode,
-                                      zend_function **pfe, zend_bool return_ref, zend_bool is_static);
-int php_fnbind_generate_lambda_function(const zend_string *arguments, const zend_string *return_type, const zend_bool is_strict, const zend_string *phpcode,
-                                      zend_function **pfe, zend_bool return_ref);
-int php_fnbind_cleanup_lambda_method();
-int php_fnbind_cleanup_lambda_function();
-int php_fnbind_destroy_misplaced_functions(zval *pDest);
-void php_fnbind_restore_internal_function(zend_string *fname_lower, zend_function *f);
 
 /* fnbind_methods.c */
 zend_class_entry *php_fnbind_fetch_class(zend_string *classname);
 zend_class_entry *php_fnbind_fetch_class_int(zend_string *classname);
-void php_fnbind_clean_children_methods(zend_class_entry *ce, zend_class_entry *ancestor_class, zend_class_entry *parent_class, zend_string *fname_lower, zend_function *orig_cfe);
-void php_fnbind_clean_children_methods_foreach(HashTable *ht, zend_class_entry *ancestor_class, zend_class_entry *parent_class, zend_string *fname_lower, zend_function *orig_cfe);
-void php_fnbind_update_children_methods(zend_class_entry *ce, zend_class_entry *ancestor_class, zend_class_entry *parent_class, zend_function *fe, zend_string *fname_lower, zend_function *orig_fe);
-void php_fnbind_update_children_methods_foreach(HashTable *ht, zend_class_entry *ancestor_class, zend_class_entry *parent_class, zend_function *fe, zend_string *fname_lower, zend_function *orig_fe);
-int php_fnbind_fetch_interface(zend_string *classname, zend_class_entry **pce);
 
 #define PHP_FNBIND_NOT_ENOUGH_MEMORY_ERROR php_error_docref(NULL, E_ERROR, "Not enough memory")
 
-/* fnbind_constants.c */
-void php_fnbind_update_children_consts(zend_class_entry *ce, zend_class_entry *parent_class, zval *c, zend_string *cname, zend_long access_type);
-void php_fnbind_update_children_consts_foreach(HashTable *ht, zend_class_entry *parent_class, zval *c, zend_string *cname, zend_long access_type);
-
-/* fnbind_classes.c */
-int php_fnbind_class_copy(zend_class_entry *src, zend_string *classname);
-
-/* fnbind_props.c */
-void php_fnbind_update_children_def_props(zend_class_entry *ce, zend_class_entry *parent_class, zval *p, zend_string *pname, int access_type, zend_class_entry *definer_class, int override, int override_in_objects);
-int php_fnbind_def_prop_add_int(zend_class_entry *ce, zend_string *propname, zval *copyval, long visibility,
-				zend_string *doc_comment, zend_class_entry *definer_class, int override,
-                                int override_in_objects);
-int php_fnbind_def_prop_remove_int(zend_class_entry *ce, zend_string *propname, zend_class_entry *definer_class,
-                                   zend_bool was_static, zend_bool remove_from_objects, zend_property_info *parent_property);
 
 typedef struct _zend_closure {
     zend_object    std;
@@ -441,7 +408,6 @@ inline static zend_bool php_fnbind_parse_function_arg(int argc, zval *args, int 
 #	define PHP_FNBIND_DESTROY_FUNCTION(fe) 	destroy_zend_function(fe);
 
 // TODO: move to a separate file.
-void php_fnbind_update_reflection_object_name(zend_object *object, int handle, const char *name);
 
 	// These struct definitions must be identical to those in ext/reflection/php_reflection.c
 

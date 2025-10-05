@@ -427,7 +427,7 @@ This change was made at the request of PECL admins, to comply with naming and pa
   (php.ini files should be changed to reference `extension=fnbind.so` or `extension=php_fnbind.dll`)
 - The configure flag names have been changed from flags such as `--enable-fnbind` / `--enable-fnbind-modify` to `--enable-fnbind` / `--enable-fnbind-modify`
 - Code using `extension_loaded('fnbind')` should be changed to `extension_loaded('fnbind')` (as well as uses of ReflectionExtension, etc.)
-- The ini options `fnbind.superglobal` and `fnbind.internal_override` are unaffected.
+
 
 Other changes:
 - It is now possible to disable superglobal support (--disable-fnbind-super was fixed)
@@ -970,99 +970,9 @@ This release also:
 - Resolves Runkit_Sandbox failure when superglobals are defined</notes>
   </release>
 
-  <release>
-   <date>2006-05-20</date>
-   <version>
-    <release>0.8.1</release>
-    <api>0.8</api>
-   </version>
-   <stability>
-    <release>beta</release>
-    <api>beta</api>
-   </stability>
-   <license uri="http://www.php.net/license">PHP</license>
-   <notes>Added source file fnbind_props.c to package</notes>
-  </release>
 
-  <release>
-   <date>2006-05-14</date>
-   <version>
-    <release>0.8</release>
-    <api>0.8</api>
-   </version>
-   <stability>
-    <release>beta</release>
-    <api>beta</api>
-   </stability>
-   <license uri="http://www.php.net/license">PHP</license>
-   <notes>Fixed SAPI handlers for genuinely threaded webservers (e.g. apache2-worker)
-Fixed internal pointer corruption in function/class popping
-Added functions:
-  fnbind_zval_inspect()
-  fnbind_return_value_used()
-  fnbind_default_property_add()
-Implemented class property importing in fnbind_import()
-Began refactor for PHP6 compatibility
-   </notes>
-  </release>
 
-  <release>
-   <version>
-    <release>0.7</release>
-    <api>0.7</api>
-   </version>
-   <stability>
-    <release>beta</release>
-    <api>beta</api>
-   </stability>
-   <date>2005-10-30</date>
-   <license uri="http://www.php.net/license">PHP</license>
-   <notes>Primarily bugfix release, only new functionality is expanded parent_scope setting.
 
-Workaround bug when using fnbind_import() with opcode caches by bypassing cache for imported file.
-Fix using fnbind_import() with multiple classes (Thanks to Stuart Herbert for the patch)
-Fix various reference issues for parameters passed to manipulation functions.
-Fix C++ compatibility in sandbox source files.
-Fix parent_scope support (was only applied to property_read and eval/include/require ops)
-Expand parent_scope setting to allow variable arrays as symbol tables.
-   </notes>
-  </release>
-
-  <release>
-   <version>
-    <release>0.6</release>
-    <api>0.6</api>
-   </version>
-   <stability>
-    <release>beta</release>
-    <api>beta</api>
-   </stability>
-   <date>2005-09-30</date>
-   <license uri="http://www.php.net/license">PHP</license>
-   <notes>Add ability to modify/rename/remove internal functions.
-Requires PHP_INI_SYSTEM setting fnbind.internal_override to be enabled.
-
-Implement Runkit_Sandbox_Parent to give child access to parent&apos;s scope
-Parent must enable $sandbox[&apos;parent_access&apos;] at minimum.
-
-Additional boolean settings include:
-parent_read - Can read properties in parent_scope
-parent_write - Can modify properties in parent_scope
-parent_call - Can call parent&apos;s functions
-parent_eval - Can eval arbitrary code in parent scope
-parent_include - Can include/require code in parent scope
-parent_echo - Can echo/print data (bypass output_handler)
-parent_die - Can kill parent (committing suicide in the process)
-
-A special parent_scope setting modifies the active symbol table of the parent
-as seen from the child according to:
-0 = Global Scope
-1 = Current active symbol table
-2 = Previously active symbol table
-3 = The one before that...etc...
-
-   </notes>
-  </release>
 
   <release>
    <version>

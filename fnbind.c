@@ -38,13 +38,11 @@ ZEND_DECLARE_MODULE_GLOBALS(fnbind)
 	ZEND_ARG_INFO(pass_by_ref, name)
 #endif
 
-PHP_FUNCTION(fnbind_add_eval);
 PHP_FUNCTION(fnbind_add_closure);
 
 /* {{{ fnbind_functions[]
  */
 zend_function_entry fnbind_functions[] = {
-	PHP_FE(fnbind_add_eval, arginfo_fnbind_add_eval)
 	PHP_FE(fnbind_add_closure, arginfo_fnbind_add_closure)
 	{NULL, NULL, NULL}
 };
@@ -106,9 +104,7 @@ static inline void _php_fnbind_init_stub_function(const char *name, ZEND_NAMED_F
 static void php_fnbind_globals_ctor(void *pDest)
 {
 	zend_fnbind_globals *fnbind_global = (zend_fnbind_globals *)pDest;
-	fnbind_global->replaced_internal_functions = NULL;
 	fnbind_global->misplaced_internal_functions = NULL;
-	// fnbind_global->removed_default_class_members = NULL;
 	fnbind_global->name_str = "name";
 	fnbind_global->removed_method_str = "__method_removed_by_fnbind__";
 	fnbind_global->removed_function_str = "__function_removed_by_fnbind__";
@@ -171,14 +167,12 @@ PHP_RINIT_FUNCTION(fnbind)
 {
 
 
-	FNBIND_G(replaced_internal_functions) = NULL;
 	FNBIND_G(misplaced_internal_functions) = NULL;
 	FNBIND_G(module_moved_to_front) = 0;
 #if PHP_VERSION_ID >= 80200
 	/* ZEND_INIT_FCALL now asserts that the function exists in the symbol table at runtime. */
 	CG(compiler_options) |= ZEND_COMPILE_IGNORE_USER_FUNCTIONS | ZEND_COMPILE_IGNORE_INTERNAL_FUNCTIONS;
 #endif
-	// FNBIND_G(removed_default_class_members) = NULL;
 
 	return SUCCESS;
 }
