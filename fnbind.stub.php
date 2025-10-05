@@ -19,3 +19,5 @@ function fnbind_add_closure(
 	string|null $doc_comment = null
 ) : bool {
 }
+
+
