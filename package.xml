@@ -48,7 +48,6 @@ http://pear.php.net/dtd/package-2.0.xsd">
    <file name="fnbind.stub.php" role="src" />
    <file name="fnbind_arginfo.h" role="src" />
    <file name="php_fnbind.h" role="src" />
-   <file name="php_fnbind_hash.h" role="src" />
    <file name="php_fnbind_zend_execute_API.h" role="src" />
    <file name="LICENSE" role="doc" />
    <file name="LICENSE.ZEND" role="doc" />

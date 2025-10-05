@@ -16,7 +16,6 @@
 */
 
 #include "fnbind.h"
-#include "php_fnbind_hash.h"
 #include "php_fnbind_zend_execute_API.h"
 
 #include "Zend/zend_exceptions.h"
