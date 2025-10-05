@@ -62,77 +62,30 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines on issues and pull reque
 UPSTREAM DOCUMENTATION
 ======================
 
-**([fnbind](https://pecl.php.net/package/fnbind) is a fork of https://github.com/zenovich/fnbind, implementing php7.2+ support)**
+[fnbind](https://github.com/danack/fnbind) is derived https://github.com/https://github.com/zenovich/runkit/fnbind, but with most of the functionality stripped out apart from binding closure to a function name.
+
 
 Features
 ========
-
-Runkit has two groups of features outlined below (Sandboxing was removed in fnbind):
-
-### CUSTOM SUPERGLOBALS
-A new .ini entry `fnbind.superglobal` is defined which may be specified as a simple variable, or list of simple variables to be registered as
-[superglobals](https://secure.php.net/manual/en/language.variables.superglobals.php).  fnbind.superglobal is defined as PHP_INI_SYSTEM and must be set in the system-wide php.ini.
+It allows you to bind a Closure to be called as a function.
 
 Example:
 
-php.ini:
-```ini
-fnbind.superglobal=foo,bar
 ```
-
-test.php:
-```php
-function testme() {
-  echo "Foo is $foo\n";
-  echo "Bar is $bar\n";
-  echo "Baz is $baz\n";
+class Bar {
+	function quux() {
+		echo "Hello world!\n";
+	}
 }
-$foo = 1;
-$bar = 2;
-$baz = 3;
 
-testme();
+$bar = new Bar(); $bar->quux(...);
+
+fnbind_add_closure('foo', $bar->quux(...));
+
+foo(); // Output is "Hello world!"
 ```
 
-Outputs:
-```
-Foo is 1
-Bar is 2
-Baz is
-```
-
-
-### USER DEFINED FUNCTION AND CLASS MANIPULATION
-
-**NOTE: Only a subset of the APIs have been ported to PHP7. Some of these APIs have segmentation faults in corner cases** (when `fnbind.internal_override=On`)
-
-User defined functions and user defined methods may now be renamed, delete, and redefined using the API described at http://www.php.net/fnbind
-
-Examples for these functions may also be found in the tests folder.
-
-#### `fnbind_lint` alternatives
-
-`fnbind_lint` was  disabled with the rest of the sandbox code due to issues porting it to PHP 7 ([Issue #114](https://github.com/fnbind/fnbind/issues/114)).
-As a replacement for `fnbind_lint`/`fnbind_lint_file` try any of the following:
-
-- `php -l --no-php-ini $filename` will quickly check if a file is syntactically valid, but will not show you any php notices about deprecated code, etc.
-- [`opcache_compile_file`](https://secure.php.net/manual/en/function.opcache-compile-file.php) may help, but will not show you any notices.
-- [`token_get_all($code, TOKEN_PARSE)`](http://php.net/token_get_all) will detect invalid ASTs in php 7.0+
-- Projects such as [PHP-Parser (Pure PHP)](https://github.com/nikic/PHP-Parser) and [php-ast (C module)](https://github.com/nikic/php-ast), which produce an Abstract Syntax Tree from php code.
-  Alternately, `token_get_all()` will throw an error for syntax errors if the flag `TOKEN_PARSE` is passed in.
-  (Unfortunately, it parses but does not detect erroneous code, e.g. duplicate classes/methods in the same file).
-
-  ```php
-  // Example replacement for fnbind_lint.
-  try {
-      $ast = token_get_all('<?php function foo(){}', TOKEN_PARSE)
-      return true;
-  } catch (ParseError $e) {
-      return false;
-  }
-  ```
-
-  Alternately, you may wish to use a different approach and run a PHP static analyzer such as [Phan](https://github.com/phan/phan), [Psalm](https://github.com/vimeo/psalm), or [PHPStan](https://github.com/phpstan/phpstan)
+Because sometimes, dependency injection is overkill, but you still want to be able to configure how a function behaves.
 
 Installation
 ============

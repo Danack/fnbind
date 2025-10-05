@@ -32,8 +32,6 @@ make clean test
 
 ### PHP Extension development
 
-
-
 For those unfamiliar with PHP5 extension writing:
 
 - [PHP Internals book](http://www.phpinternalsbook.com/index.html#php-7) - Describes how to write extensions *for PHP7*
@@ -48,9 +46,6 @@ The representation of internal values(`zval`s) has changed between PHP5 and PHP7
 - https://nikic.github.io/2015/06/19/Internal-value-representation-in-PHP-7-part-2.html
 - https://nikic.github.io/2017/04/14/PHP-7-Virtual-machine.html (Useful for understanding fnbind function/method manipulation)
 
-This now uses `zend_string`.
-I changed the code to use `zend_string` wherever possible to be consistent.
-This is not strictly necessary.
 
 Notes on `HashTable`s
 
