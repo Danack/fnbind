@@ -1,0 +1,13 @@
+{
+    "name": "danack/fnbind",
+    "description": "Allows defining a function from a closure.",
+    "type": "php-ext",
+    "authors": [
+        {
+            "name": "Danack"
+        }
+    ],
+    "require": {
+        "php": ">=7.4"
+    }
+}
